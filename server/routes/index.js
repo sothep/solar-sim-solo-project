@@ -27,4 +27,9 @@ router.post('/', passport.authenticate('local', {
   failureRedirect: '/failure'
 }));
 
+router.get('/*', function(request, response, next){
+    var url = request.originalUrl;
+    response.redirect('/#' + url);
+});
+
 module.exports = router;

@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var SolarUser = require('../models/solar-user');
 var index = require('./routes/index');
 var register = require('./routes/register');
+var solarAPI = require('./routes/solar');
 
 var app = express();
 app.use(express.static('server/public'));
@@ -23,8 +24,9 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', index);
 app.use('/auth', register);
+app.use('/pvwatts5', solarAPI);
+app.use('/', index);
 
 var mongoURI = 'mongodb://localhost:27017/solar-test';
 mongoose.connect(mongoURI);

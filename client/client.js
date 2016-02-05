@@ -1,8 +1,8 @@
-var app = angular.module('SolarApp', ['ngRoute']);
+var app = angular.module('SolarApp', ['ngRoute', 'ngCookies']);
 
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
   $routeProvider
-    .when('/', {
+    .when('/login', {
       templateUrl: 'views/login.html',
       controller: 'LoginController'
     })
@@ -10,7 +10,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl: 'views/register.html',
       controller: 'RegisterController'
     })
-    .when('/home', {
+    .when('/', {
       templateUrl: 'views/home.html',
       controller: 'HomeController'
     })
@@ -60,7 +60,7 @@ app.controller('MainController', ['$scope', '$location', 'AuthentiService', func
   };
   $scope.signOut = function(){
     AuthentiService.signOut().then(function(response){
-      $location.path('/');
+      $location.path('/login');
     });
   };
 }]);
@@ -84,7 +84,7 @@ app.controller('LoginController', ['$scope', '$location', 'AuthentiService', fun
       console.log('server response:', response.data);
       if (response.data == 'success'){
         AuthentiService.logIn();
-        $location.path('/home');
+        $location.path('/');
       }
       else $scope.badLogin = true;
       console.log('Logged in?', AuthentiService.loggedIn());
@@ -96,7 +96,6 @@ app.controller('LoginController', ['$scope', '$location', 'AuthentiService', fun
 }]);
 
 app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
-  $scope.passwordUnmatched = false;
   $scope.userExists = false;
   $scope.badLogin = false;
   $scope.user = {
@@ -123,7 +122,7 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
           console.log('server response:', response.data);
           if (response.data == 'success'){
             AuthentiService.logIn();
-            $location.path('/home');
+            $location.path('/');
           }
           else $scope.badLogin = true;
           console.log('Logged in?', AuthentiService.loggedIn());
@@ -138,25 +137,61 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
 }]);
 
 app.controller('HomeController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
-  if (!AuthentiService.loggedIn()) $location.path('/');
+  console.log()
+  if (!AuthentiService.loggedIn()) $location.path('/login');
 
 }]);
 
 app.controller('ViewController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
-  if (!AuthentiService.loggedIn()) $location.path('/');
+  if (!AuthentiService.loggedIn()) $location.path('/login');
 
 }]);
 
-app.controller('CreateController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
-  if (!AuthentiService.loggedIn()) $location.path('/');
+app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'SolarService', function($scope, $location, AuthentiService, SolarService){
+  $scope.error = null;
+  $scope.installData = { //initialize to default values
+    name: "Install-01", //***MAKE THIS BLANK & html-required
+    latitude: 40, //*** html-required
+    longitude: -105, //*** html-required
+    //add html-form min/max for all below...
+    tilt: 40,
+    azimuth: 180,
+    capacityKW: 4,
+    percentLosses: 14,
+    arrayType: 0,
+    moduleType: 0
+  };
 
+  $scope.resetFlags = function(){
+    $scope.error = null;
+  };
+
+  $scope.newSolarInstall = function(){
+    $scope.resetFlags();
+    SolarService.newInstall($scope.installData).then(function(response){
+      if (response.data == 'success'){
+        $location.path('/view');
+      }
+      else {
+        $scope.error = "Error connecting to PVWatts5 API.  Please try again later.";
+      }
+    });
+  };
 }]);
 
-app.factory('AuthentiService', ['$http', function($http){
-  var user = false;
+app.factory('SolarService', ['$http', function($http){
+  var newInstall = function(installData){
+    return $http.post('/pvwatts5/new', installData);
+  }
 
+  return {
+    newInstall: newInstall
+  }
+}]);
+
+app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
   var signOut = function(){
-    user = false;
+    $cookies.put('loggedIn', '');
     return $http.get('/signout');
   };
   var register = function(userInfo){
@@ -170,10 +205,10 @@ app.factory('AuthentiService', ['$http', function($http){
     return $http.post('/', userInfo);
   };
   var logIn = function(){
-    user = true;
+    $cookies.put('loggedIn', 'true');
   };
   var loggedIn = function(){
-    if (user) return true;
+    if ($cookies.get('loggedIn') == 'true') return true;
     return false;
   };
 
