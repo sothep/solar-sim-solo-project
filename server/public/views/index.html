@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="SolarApp">
+  <head>
+    <meta charset="utf-8">
+    <title>Solar-Sim (Working Title...)</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <script type="text/javascript" src="scripts/vendors/angular/angular.min.js"></script>
+    <script type="text/javascript" src="scripts/vendors/angular-route/angular-route.min.js"></script>
+    <script type="text/javascript" src="scripts/assets/client.min.js"></script>
+    <base href="/">
+  </head>
+  <body ng-controller="MainController">
+    <div ng-show="loggedIn()">
+      <a href="/home"><button>Go Home</button></a>
+      <button ng-click="signOut()">Sign Out</button>
+      <a href="/view"><button>View Saved Installations</button></a>
+      <div ng-hide="maxInstalls()">
+        <a href="/create"><button>Create New Installation</button></a>
+      </div>
+    </div>
+    <h1>This thing on?</h1>
+    <div ng-view>
+    </div>
+  </body>
+</html>

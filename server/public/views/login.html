@@ -1,0 +1,18 @@
+<h2>In the login page!</h2>
+<form class="regLog" ng-submit="login()">
+  <div>
+    <label for="username">Username:</label>
+    <input ng-model="user.username" type="text" name="username" id="username" required/>
+  </div>
+  <div>
+    <label for="password">Password:</label>
+    <input ng-model="user.password" type="password" name="password" id="password" required/>
+  </div>
+  <div ng-show="badLogin">
+    <p class="formWarning">Invalid username and/or password.</p>
+  </div>
+  <div>
+    <input type="submit" value="Login">
+    <button ng-click="register()">Create Account</button>
+  </div>
+</form>

@@ -1,0 +1,30 @@
+<h2>In the registration page!</h2>
+<form class="regLog" ng-submit="register()">
+  <div>
+    <label for="username">Username:</label>
+    <input ng-model="user.username" type="text" name="username" id="username" required/>
+  </div>
+  <div>
+    <label for="password">Password:</label>
+    <input ng-model="user.password" type="password" name="password" id="password" required/>
+  </div>
+  <div>
+    <label for="passwordConfirm">Confirm Password:</label>
+    <input ng-model="passwordConfirm" type="password" name="passwordConfirm" id="passwordConfirm" required/>
+    <div ng-show="passwordUnmatched">
+      <p class="formWarning">Passwords do not match.</p>
+    </div>
+    <div ng-show="userExists">
+      <p class="formWarning">An account with that username already exists.
+      Please choose a different username, or choose Go Back to log in.</p>
+    </div>
+    <div ng-show="badLogin">
+      <p class="formWarning">We're sorry, an error occurred
+        during login.  Please try again later.</p>
+      </div>
+  </div>
+  <div>
+    <input type="submit" value="Sign Up">
+    <a href="/"><button>Go Back</button></a>
+  </div>
+</form>
