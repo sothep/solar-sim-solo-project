@@ -23,6 +23,7 @@ var SolarSchema = new Schema({
   ac_monthly: [ { type: Number, required: true } ],
   dc_annual: { type: Number, required: true },
   ac_annual: { type: Number, required: true }
-}, { _id: false });
+});
+// }, { _id: false });
 
 module.exports = mongoose.model('SolarSchema', SolarSchema);

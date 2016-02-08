@@ -1,1 +1,7 @@
 <h2>In the view page!</h2>
+<ul>
+  <li ng-repeat="install in installData track by $index">
+    <button ng-click="deleteInstall(install._id)">Delete</button>
+    <p>{{ install.name }}</p>
+  </li>
+</ul>

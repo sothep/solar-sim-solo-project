@@ -10,8 +10,55 @@ var PV_KEY = 'WHsWTJkyK8rv3wIcuj6EEgBoMdMzOUtqps1jmskV';
 var router = express.Router();
 router.use(bodyParser.json());
 
-router.post('/new', function(request, response){
+router.get('/userInstalls', function(request, response){
   if (!request.user) {
+    response.redirect('/signout');
+    return;
+  }
+  var userId = request.user._id;
+  var installQuery = SolarUser.findById(userId);
+  installQuery.select('installs');
+  installQuery.exec(function(err, installs){
+    if (err) {
+      console.log(err);
+      response.send('failure');
+      return;
+    }
+    console.log(installs);
+    response.send(JSON.stringify(installs));
+  });
+});
+
+router.delete('/install/:id', function(request, response){
+  if (!request.user) {
+    response.redirect('/signout');
+    return;
+  }
+  var userId = request.user._id;
+  var installId = request.params.id;
+
+  SolarUser.findById(userId, function(err, user){
+    if (err) {
+      console.log(err);
+      response.send('failure');
+      return;
+    }
+    console.log('install ID to delete:', installId);
+    user.installs.pull({ _id: installId });
+    user.save(function(err, result){
+      if (err) {
+        console.log(err);
+        response.send('failure');
+        return;
+      }
+      console.log(result);
+    });
+  });
+  response.send('success');
+});
+
+router.post('/new', function(request, response){
+  if (!request.user){
     response.redirect('/signout');
     return;
   }
@@ -29,7 +76,7 @@ router.post('/new', function(request, response){
         console.log(result);
       });
     });
-    response.send('success');
+    response.send('success'); //should this be nested in the user-save function above?
   }).catch(function(err){
     console.log('error:', err);
     response.send('error in PVWatts5 API call');

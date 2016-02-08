@@ -88,13 +88,11 @@ app.controller('LoginController', ['$scope', '$location', 'AuthentiService', fun
   $scope.login = function(){
     $scope.resetFlags();
     AuthentiService.signIn($scope.user).then(function(response){
-      console.log('server response:', response.data);
       if (response.data == 'success'){
         AuthentiService.logIn();
         $location.path('/');
       }
       else $scope.badLogin = true;
-      console.log('Logged in?', AuthentiService.loggedIn());
     }, function(error){
       console.log('Error: authentication failed.');
       return false;
@@ -126,13 +124,11 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
     AuthentiService.register($scope.user).then(function(response){
       if (response.data == 'success'){
         AuthentiService.signIn($scope.user).then(function(response){
-          console.log('server response:', response.data);
           if (response.data == 'success'){
             AuthentiService.logIn();
             $location.path('/');
           }
           else $scope.badLogin = true;
-          console.log('Logged in?', AuthentiService.loggedIn());
         }, function(error){
           console.log('Error: authentication failed.');
           return false;
@@ -149,13 +145,35 @@ app.controller('HomeController', ['$scope', '$location', 'AuthentiService', func
 
 }]);
 
-app.controller('ViewController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
+app.controller('ViewController', ['$scope', '$location', 'AuthentiService', 'SolarService', function($scope, $location, AuthentiService, SolarService){
   if (!AuthentiService.loggedIn()) $location.path('/login');
+  $scope.installData = [];
+  $scope.selectedInstall = null;
+  $scope.error = null;
 
+  $scope.getInstalls = function(){
+    SolarService.getInstalls().then(function(response){
+      if (response.data && response.data.installs){
+        $scope.installData = response.data.installs;
+      }
+      else {
+        $scope.error = "Error connecting to PVWatts5 API.  Please try again later.";
+      }
+    });
+  }
+
+  $scope.deleteInstall = function(installId){
+    SolarService.deleteInstall(installId).then(function(response){
+      $scope.getInstalls();
+    });
+  };
+
+  $scope.getInstalls();
 }]);
 
 app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'SolarService', function($scope, $location, AuthentiService, SolarService){
   $scope.error = null;
+  $scope.dupName = false;
   $scope.suggestedTilt = "";
   $scope.suggestedAzi = "";
   $scope.installData = { //initialize to default values
@@ -173,17 +191,28 @@ app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'S
 
   $scope.resetFlags = function(){
     $scope.error = null;
+    $scope.dupName = false;
   };
 
   $scope.newSolarInstall = function(){
     $scope.resetFlags();
-    SolarService.newInstall($scope.installData).then(function(response){
-      if (response.data == 'success'){
-        $location.path('/view');
-      }
-      else {
-        $scope.error = "Error connecting to PVWatts5 API.  Please try again later.";
-      }
+    SolarService.getInstalls().then(function(response){
+        if (response.data && response.data.installs){
+          for (var i = 0; i < response.data.installs.length; i++){
+            if (response.data.installs[i].name == $scope.installData.name){
+              $scope.dupName = true;
+              return;
+            }
+          }
+        }
+        SolarService.newInstall($scope.installData).then(function(response){
+          if (response.data == 'success'){
+            $location.path('/view');
+          }
+          else {
+            $scope.error = "Error connecting to PVWatts5 API.  Please try again later.";
+          }
+        });
     });
   };
 }]);
@@ -191,10 +220,17 @@ app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'S
 app.factory('SolarService', ['$http', function($http){
   var newInstall = function(installData){
     return $http.post('/pvwatts5/new', installData);
-  }
-
+  };
+  var getInstalls = function(){
+    return $http.get('/pvwatts5/userInstalls');
+  };
+  var deleteInstall = function(installId){
+    return $http.delete('/pvwatts5/install/' + installId);
+  };
   return {
-    newInstall: newInstall
+    newInstall: newInstall,
+    getInstalls: getInstalls,
+    deleteInstall: deleteInstall
   }
 }]);
 
