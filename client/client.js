@@ -51,7 +51,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 
 //use "controller as" syntax somewhere??
 
-app.controller('MainController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
+app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiService', function($scope, $location, $interval, AuthentiService){
   $scope.loggedIn = function(){
     return AuthentiService.loggedIn();
   };
@@ -63,6 +63,13 @@ app.controller('MainController', ['$scope', '$location', 'AuthentiService', func
       $location.path('/login');
     });
   };
+  var checkServerLogin = function(){
+    AuthentiService.serverLoggedIn().then(function(response){
+      console.log('checking login status with server...');
+      if (response.data == 'failure') $scope.signOut();
+    });
+  };
+  $interval(checkServerLogin, 30000);
 }]);
 
 app.controller('LoginController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
@@ -149,6 +156,8 @@ app.controller('ViewController', ['$scope', '$location', 'AuthentiService', func
 
 app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'SolarService', function($scope, $location, AuthentiService, SolarService){
   $scope.error = null;
+  $scope.suggestedTilt = "";
+  $scope.suggestedAzi = "";
   $scope.installData = { //initialize to default values
     name: "Install-01", //***MAKE THIS BLANK & html-required
     latitude: 40, //*** html-required
@@ -190,7 +199,10 @@ app.factory('SolarService', ['$http', function($http){
 }]);
 
 app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
+  var user = false;
+
   var signOut = function(){
+    user = false;
     $cookies.put('loggedIn', '');
     return $http.get('/signout');
   };
@@ -205,18 +217,23 @@ app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
     return $http.post('/', userInfo);
   };
   var logIn = function(){
+    user = true;
     $cookies.put('loggedIn', 'true');
   };
   var loggedIn = function(){
-    if ($cookies.get('loggedIn') == 'true') return true;
+    if (user || $cookies.get('loggedIn') == 'true') return true;
     return false;
   };
+  var serverLoggedIn = function(){
+    return $http.get('/loggedIn');
+  }
 
   return {
     register: register,
     signIn: signIn,
     signOut: signOut,
     logIn: logIn,
-    loggedIn: loggedIn
+    loggedIn: loggedIn,
+    serverLoggedIn: serverLoggedIn
   };
 }]);

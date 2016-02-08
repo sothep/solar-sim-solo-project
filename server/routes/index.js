@@ -18,6 +18,11 @@ router.get('/signout', function(request, response){
   response.send('signed out');
 });
 
+router.get('/loggedIn', function(request, response){
+  if (request.user) response.redirect('/success');
+  else response.redirect('/failure');
+});
+
 router.get('/', function(request, response){
   response.sendFile(path.join(__dirname, '../public/views/index.html'));
 });
