@@ -62,8 +62,6 @@ router.post('/new', function(request, response){
     response.redirect('/signout');
     return;
   }
-  //need to add case (both here and @client) to reject
-  //names that already exist in the database and abort API call.
   getSolarData(request).then(function(res){
     var userId = request.user._id;
     var newInstall = newSolarInstall(res, request.body.name);

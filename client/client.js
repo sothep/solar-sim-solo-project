@@ -26,26 +26,6 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl: 'views/login.html',
       controller: 'LoginController'
     });
-
-    /*I probably need to enforce a 403/Forbidden
-    if the user attempts to access any server routes directly.*/
-
-    /*Likewise, if the user attempts to access any of the *permitted*
-    client-side routes before authentication, would I want to enforce
-    401 / unauthenticated?  Or can I accomplish all of this using
-    $location.path()??*/
-
-    /*For general structure: every controller will address an
-    authentication factory to verify that the user has been logged in.
-    If not, the user should be redirected to the login page.*/
-
-    /*Do I need to do anything, e.g. with sessions, to prevent or
-    handle the same user logging in multiple times concurrently?
-
-    If I do not, I suspect this could break some things, such as
-    the maximum number of saves per user, and the interface to
-    enforce that.*/
-
   $locationProvider.html5Mode(true);
 }]);
 
@@ -140,9 +120,7 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
 }]);
 
 app.controller('HomeController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
-  console.log()
   if (!AuthentiService.loggedIn()) $location.path('/login');
-
 }]);
 
 app.controller('ViewController', ['$scope', '$location', 'AuthentiService', 'SolarService', function($scope, $location, AuthentiService, SolarService){
@@ -161,17 +139,16 @@ app.controller('ViewController', ['$scope', '$location', 'AuthentiService', 'Sol
       }
     });
   }
-
   $scope.deleteInstall = function(installId){
     SolarService.deleteInstall(installId).then(function(response){
       $scope.getInstalls();
     });
   };
-
   $scope.getInstalls();
 }]);
 
 app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'SolarService', function($scope, $location, AuthentiService, SolarService){
+  if (!AuthentiService.loggedIn()) $location.path('/login');
   $scope.error = null;
   $scope.dupName = false;
   $scope.suggestedTilt = "";
@@ -231,7 +208,7 @@ app.factory('SolarService', ['$http', function($http){
     newInstall: newInstall,
     getInstalls: getInstalls,
     deleteInstall: deleteInstall
-  }
+  };
 }]);
 
 app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
@@ -262,7 +239,7 @@ app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
   };
   var serverLoggedIn = function(){
     return $http.get('/loggedIn');
-  }
+  };
 
   return {
     register: register,
