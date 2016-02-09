@@ -10,12 +10,12 @@
     <script type="text/javascript" src="scripts/assets/client.min.js"></script>
     <base href="/">
   </head>
-  <body ng-controller="MainController">
-    <div ng-show="loggedIn()">
+  <body ng-controller="MainController as mainControl">
+    <div ng-show="mainControl.loggedIn()">
       <a href="/"><button>Go Home</button></a>
-      <button ng-click="signOut()">Sign Out</button>
+      <button ng-click="mainControl.signOut()">Sign Out</button>
       <a href="/view"><button>View Saved Installations</button></a>
-      <div ng-hide="maxInstalls()">
+      <div ng-hide="mainControl.maxInstalls()">
         <a href="/create"><button>Create New Installation</button></a>
       </div>
     </div>

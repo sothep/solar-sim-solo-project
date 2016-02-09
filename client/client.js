@@ -31,22 +31,25 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 
 //use "controller as" syntax somewhere??
 
-app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiService', function($scope, $location, $interval, AuthentiService){
-  $scope.loggedIn = function(){
+app.controller('MainController', ['$location', '$interval', 'AuthentiService', function($location, $interval, AuthentiService){
+  this.username = "";
+  this.loggedIn = function(){
+    this.username = AuthentiService.getName();
     return AuthentiService.loggedIn();
   };
-  $scope.maxInstalls = function(){
+  this.maxInstalls = function(){
     return false; //placeholder...
   };
-  $scope.signOut = function(){
+  var signOut = function(){
     AuthentiService.signOut().then(function(response){
       $location.path('/login');
     });
   };
+  this.signOut = signOut;
   var checkServerLogin = function(){
     AuthentiService.serverLoggedIn().then(function(response){
       console.log('checking login status with server...');
-      if (response.data == 'failure') $scope.signOut();
+      if (response.data == 'failure') signOut();
     });
   };
   $interval(checkServerLogin, 30000);
@@ -69,7 +72,7 @@ app.controller('LoginController', ['$scope', '$location', 'AuthentiService', fun
     $scope.resetFlags();
     AuthentiService.signIn($scope.user).then(function(response){
       if (response.data == 'success'){
-        AuthentiService.logIn();
+        AuthentiService.logIn($scope.user.username);
         $location.path('/');
       }
       else $scope.badLogin = true;
@@ -105,7 +108,7 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
       if (response.data == 'success'){
         AuthentiService.signIn($scope.user).then(function(response){
           if (response.data == 'success'){
-            AuthentiService.logIn();
+            AuthentiService.logIn($scope.user.username);
             $location.path('/');
           }
           else $scope.badLogin = true;
@@ -217,6 +220,7 @@ app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
   var signOut = function(){
     user = false;
     $cookies.put('loggedIn', '');
+    $cookies.put('user', '');
     return $http.get('/signout');
   };
   var register = function(userInfo){
@@ -229,9 +233,11 @@ app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
     console.log('userInfo:', userInfo);
     return $http.post('/', userInfo);
   };
-  var logIn = function(){
+  var logIn = function(username){
     user = true;
     $cookies.put('loggedIn', 'true');
+    $cookies.put('username', username);
+    console.log("logging in:", username);
   };
   var loggedIn = function(){
     if (user || $cookies.get('loggedIn') == 'true') return true;
@@ -240,6 +246,11 @@ app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
   var serverLoggedIn = function(){
     return $http.get('/loggedIn');
   };
+  var getName = function(){
+    var userName = $cookies.get('username');
+    if (userName && userName.length > 0) return userName;
+    return null;
+  };
 
   return {
     register: register,
@@ -247,6 +258,7 @@ app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
     signOut: signOut,
     logIn: logIn,
     loggedIn: loggedIn,
-    serverLoggedIn: serverLoggedIn
+    serverLoggedIn: serverLoggedIn,
+    getName: getName
   };
 }]);
