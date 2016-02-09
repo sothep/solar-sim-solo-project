@@ -10,11 +10,27 @@ var PV_KEY = 'WHsWTJkyK8rv3wIcuj6EEgBoMdMzOUtqps1jmskV';
 var router = express.Router();
 router.use(bodyParser.json());
 
+router.get('/numInstalls', function(request, response){
+  confirmLogin(request, response);
+  var userId = request.user._id;
+  var installQuery = SolarUser.findById(userId);
+  installQuery.select('installs');
+  installQuery.exec(function(err, installs){
+    if (err) {
+      console.log(err);
+      response.send('failure');
+      return;
+    }
+    var installCount = {
+      count: installs.installs.length
+    }
+    console.log("number of installs:", installCount.count);
+    response.send(JSON.stringify(installCount));
+  });
+});
+
 router.get('/userInstalls', function(request, response){
-  if (!request.user) {
-    response.redirect('/signout');
-    return;
-  }
+  confirmLogin(request, response);
   var userId = request.user._id;
   var installQuery = SolarUser.findById(userId);
   installQuery.select('installs');
@@ -30,10 +46,7 @@ router.get('/userInstalls', function(request, response){
 });
 
 router.delete('/install/:id', function(request, response){
-  if (!request.user) {
-    response.redirect('/signout');
-    return;
-  }
+  confirmLogin(request, response);
   var userId = request.user._id;
   var installId = request.params.id;
 
@@ -58,10 +71,7 @@ router.delete('/install/:id', function(request, response){
 });
 
 router.post('/new', function(request, response){
-  if (!request.user){
-    response.redirect('/signout');
-    return;
-  }
+  confirmLogin(request, response);
   getSolarData(request).then(function(res){
     var userId = request.user._id;
     var newInstall = newSolarInstall(res, request.body.name);
@@ -80,6 +90,13 @@ router.post('/new', function(request, response){
     response.send('error in PVWatts5 API call');
   });
 });
+
+function confirmLogin(request, response){
+  if (!request.user) {
+    response.redirect('/signout');
+    return;
+  }
+}
 
 function newSolarInstall(APIData, installName){
   var dcAnnualSum = 0;

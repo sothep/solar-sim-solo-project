@@ -29,17 +29,27 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   $locationProvider.html5Mode(true);
 }]);
 
-//use "controller as" syntax somewhere??
-
-app.controller('MainController', ['$location', '$interval', 'AuthentiService', function($location, $interval, AuthentiService){
+app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiService', 'SolarService', function($scope, $location, $interval, AuthentiService, SolarService){
+  var MAX_INSTALLS_PERMITTED = 2;
+  var numInstalls = 0;
   this.username = "";
   this.loggedIn = function(){
     this.username = AuthentiService.getName();
     return AuthentiService.loggedIn();
   };
   this.maxInstalls = function(){
-    return false; //placeholder...
+    if (numInstalls < MAX_INSTALLS_PERMITTED) return false;
+    else return true;
   };
+  function updateNumInstalls(){
+    console.log('are we updating?');
+    SolarService.numInstalls().then(function(response){
+      console.log('current count:', numInstalls);
+      console.log('updating count to:', response.data.count);
+      numInstalls = response.data.count;
+    });
+  }
+  $scope.$on('checkInstallCount', updateNumInstalls);
   var signOut = function(){
     AuthentiService.signOut().then(function(response){
       $location.path('/login');
@@ -73,6 +83,7 @@ app.controller('LoginController', ['$scope', '$location', 'AuthentiService', fun
     AuthentiService.signIn($scope.user).then(function(response){
       if (response.data == 'success'){
         AuthentiService.logIn($scope.user.username);
+        $scope.$emit('checkInstallCount');
         $location.path('/');
       }
       else $scope.badLogin = true;
@@ -109,6 +120,7 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
         AuthentiService.signIn($scope.user).then(function(response){
           if (response.data == 'success'){
             AuthentiService.logIn($scope.user.username);
+            $scope.$emit('checkInstallCount');
             $location.path('/');
           }
           else $scope.badLogin = true;
@@ -144,6 +156,7 @@ app.controller('ViewController', ['$scope', '$location', 'AuthentiService', 'Sol
   }
   $scope.deleteInstall = function(installId){
     SolarService.deleteInstall(installId).then(function(response){
+      $scope.$emit('checkInstallCount');
       $scope.getInstalls();
     });
   };
@@ -157,7 +170,7 @@ app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'S
   $scope.suggestedTilt = "";
   $scope.suggestedAzi = "";
   $scope.installData = { //initialize to default values
-    name: "Install-01", //***MAKE THIS BLANK & html-required
+    name: "Install-02", //***MAKE THIS BLANK & html-required
     latitude: 40, //*** html-required
     longitude: -105, //*** html-required
     //add html-form min/max for all below...
@@ -187,6 +200,7 @@ app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'S
         }
         SolarService.newInstall($scope.installData).then(function(response){
           if (response.data == 'success'){
+            $scope.$emit('checkInstallCount');
             $location.path('/view');
           }
           else {
@@ -207,10 +221,14 @@ app.factory('SolarService', ['$http', function($http){
   var deleteInstall = function(installId){
     return $http.delete('/pvwatts5/install/' + installId);
   };
+  var numInstalls = function(){
+    return $http.get('/pvwatts5/numInstalls');
+  };
   return {
     newInstall: newInstall,
     getInstalls: getInstalls,
-    deleteInstall: deleteInstall
+    deleteInstall: deleteInstall,
+    numInstalls: numInstalls
   };
 }]);
 
@@ -230,14 +248,12 @@ app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
   };
   var signIn = function(userInfo){
     signOut();
-    console.log('userInfo:', userInfo);
     return $http.post('/', userInfo);
   };
   var logIn = function(username){
     user = true;
     $cookies.put('loggedIn', 'true');
     $cookies.put('username', username);
-    console.log("logging in:", username);
   };
   var loggedIn = function(){
     if (user || $cookies.get('loggedIn') == 'true') return true;
