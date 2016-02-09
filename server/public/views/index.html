@@ -15,7 +15,7 @@
       <a href="/"><button>Go Home</button></a>
       <button ng-click="mainControl.signOut()">Sign Out</button>
       <a href="/view"><button>View Saved Installations</button></a>
-      <div ng-hide="mainControl.maxInstalls()">
+      <div ng-hide="this.preventCreate">
         <a href="/create"><button>Create New Installation</button></a>
       </div>
     </div>

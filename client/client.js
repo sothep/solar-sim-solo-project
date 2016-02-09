@@ -1,28 +1,24 @@
 var app = angular.module('SolarApp', ['ngRoute', 'ngCookies']);
+var MAX_INSTALLS_PERMITTED = 5;
 
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
   $routeProvider
     .when('/login', {
       templateUrl: 'views/login.html',
       controller: 'LoginController'
-    })
-    .when('/register', {
+    }).when('/register', {
       templateUrl: 'views/register.html',
       controller: 'RegisterController'
-    })
-    .when('/', {
+    }).when('/', {
       templateUrl: 'views/home.html',
       controller: 'HomeController'
-    })
-    .when('/create', {
+    }).when('/create', {
       templateUrl: 'views/create.html',
       controller: 'CreateController'
-    })
-    .when('/view', {
+    }).when('/view', {
       templateUrl: 'views/view.html',
       controller: 'ViewController'
-    })
-    .otherwise({
+    }).otherwise({
       templateUrl: 'views/login.html',
       controller: 'LoginController'
     });
@@ -30,26 +26,13 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 }]);
 
 app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiService', 'SolarService', function($scope, $location, $interval, AuthentiService, SolarService){
-  var MAX_INSTALLS_PERMITTED = 2;
-  var numInstalls = 0;
   this.username = "";
   this.loggedIn = function(){
     this.username = AuthentiService.getName();
     return AuthentiService.loggedIn();
   };
-  this.maxInstalls = function(){
-    if (numInstalls < MAX_INSTALLS_PERMITTED) return false;
-    else return true;
-  };
-  function updateNumInstalls(){
-    console.log('are we updating?');
-    SolarService.numInstalls().then(function(response){
-      console.log('current count:', numInstalls);
-      console.log('updating count to:', response.data.count);
-      numInstalls = response.data.count;
-    });
-  }
-  $scope.$on('checkInstallCount', updateNumInstalls);
+  this.preventCreate = false;
+
   var signOut = function(){
     AuthentiService.signOut().then(function(response){
       $location.path('/login');
@@ -83,7 +66,6 @@ app.controller('LoginController', ['$scope', '$location', 'AuthentiService', fun
     AuthentiService.signIn($scope.user).then(function(response){
       if (response.data == 'success'){
         AuthentiService.logIn($scope.user.username);
-        $scope.$emit('checkInstallCount');
         $location.path('/');
       }
       else $scope.badLogin = true;
@@ -120,7 +102,6 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
         AuthentiService.signIn($scope.user).then(function(response){
           if (response.data == 'success'){
             AuthentiService.logIn($scope.user.username);
-            $scope.$emit('checkInstallCount');
             $location.path('/');
           }
           else $scope.badLogin = true;
@@ -156,7 +137,6 @@ app.controller('ViewController', ['$scope', '$location', 'AuthentiService', 'Sol
   }
   $scope.deleteInstall = function(installId){
     SolarService.deleteInstall(installId).then(function(response){
-      $scope.$emit('checkInstallCount');
       $scope.getInstalls();
     });
   };
@@ -167,10 +147,10 @@ app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'S
   if (!AuthentiService.loggedIn()) $location.path('/login');
   $scope.error = null;
   $scope.dupName = false;
-  $scope.suggestedTilt = "";
-  $scope.suggestedAzi = "";
+  $scope.suggestedTilt = "";//set equal to latitude
+  $scope.suggestedAzi = "";//0 for southern hemisphere; 180 for northern
   $scope.installData = { //initialize to default values
-    name: "Install-02", //***MAKE THIS BLANK & html-required
+    name: "", //***MAKE THIS BLANK & html-required
     latitude: 40, //*** html-required
     longitude: -105, //*** html-required
     //add html-form min/max for all below...
@@ -200,7 +180,6 @@ app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'S
         }
         SolarService.newInstall($scope.installData).then(function(response){
           if (response.data == 'success'){
-            $scope.$emit('checkInstallCount');
             $location.path('/view');
           }
           else {

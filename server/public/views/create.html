@@ -1,3 +1,21 @@
 <h2>In the create page!</h2>
-<button ng-click="newSolarInstall()">Create New Solar Installation</button>
-<p class="formWarning" ng-show="dupName">Error: name already exists in database.</p>
+
+<form class="createForm" ng-submit="newSolarInstall()">
+  <div class="createContainer">
+
+
+  </div>
+  <div class="createContainer">
+
+
+  </div>
+  <div class="createContainer">
+
+
+  </div>
+  <div class="createContainerFloor">
+    <input ng-model="installData.name" type="text" required>
+    <p class="formWarning" ng-show="dupName">Error: name already exists in database.</p>
+    <input type="submit" value="Create Solar Installation">
+  </div>
+</form>
