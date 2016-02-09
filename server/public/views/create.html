@@ -17,5 +17,6 @@
     <input ng-model="installData.name" type="text" required>
     <p class="formWarning" ng-show="dupName">Error: name already exists in database.</p>
     <input type="submit" value="Create Solar Installation">
+    <p class="formWarning">You have {{numRemaining}} installs left!</p>
   </div>
 </form>

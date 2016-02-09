@@ -18,6 +18,9 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     }).when('/view', {
       templateUrl: 'views/view.html',
       controller: 'ViewController'
+    }).when('/tooManyInstalls', {
+      templateUrl: 'views/tooMany.html',
+      controller: 'WarningController'
     }).otherwise({
       templateUrl: 'views/login.html',
       controller: 'LoginController'
@@ -31,8 +34,6 @@ app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiS
     this.username = AuthentiService.getName();
     return AuthentiService.loggedIn();
   };
-  this.preventCreate = false;
-
   var signOut = function(){
     AuthentiService.signOut().then(function(response){
       $location.path('/login');
@@ -119,6 +120,10 @@ app.controller('HomeController', ['$scope', '$location', 'AuthentiService', func
   if (!AuthentiService.loggedIn()) $location.path('/login');
 }]);
 
+app.controller('WarningController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
+  if (!AuthentiService.loggedIn()) $location.path('/login');
+}]);
+
 app.controller('ViewController', ['$scope', '$location', 'AuthentiService', 'SolarService', function($scope, $location, AuthentiService, SolarService){
   if (!AuthentiService.loggedIn()) $location.path('/login');
   $scope.installData = [];
@@ -145,6 +150,13 @@ app.controller('ViewController', ['$scope', '$location', 'AuthentiService', 'Sol
 
 app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'SolarService', function($scope, $location, AuthentiService, SolarService){
   if (!AuthentiService.loggedIn()) $location.path('/login');
+  $scope.numRemaining = MAX_INSTALLS_PERMITTED;
+  SolarService.numInstalls().then(function(response){
+    $scope.numRemaining -= response.data.count;
+    if ($scope.numRemaining <= 0){
+      $location.path('/tooManyInstalls');
+    }
+  });
   $scope.error = null;
   $scope.dupName = false;
   $scope.suggestedTilt = "";//set equal to latitude
