@@ -8,24 +8,28 @@
 </div>
 
 <form class="createForm" ng-submit="newSolarInstall()">
-  <div class="createContainer">
+  <div class="columnHolder">
+    <div class="createContainer right">
+      Hmm...
 
+    </div>
+    <div class="createContainer left">
+      Hello?
 
-  </div>
-  <div class="createContainer">
+    </div>
+    <div class="createContainer middle">
+      You there?
 
-
-  </div>
-  <div class="createContainer">
-
-
+    </div>
   </div>
   <div class="createContainerFloor">
-    <input ng-model="installData.name" type="text" required>
-    <p class="formWarning" ng-show="dupName">Error: name already exists in database.</p>
-    <input type="submit" ng-disabled="formInfo.disableForm" value="Create Solar Installation">
-    <p class="formWarning">You have {{formInfo.numRemaining}}
-      <ng-pluralize count="formInfo.numRemaining" when="{'1':'install', 'other':'installs'}"></ng-pluralize>
-       left!</p>
+    <div class="floorControls">
+      <input ng-model="installData.name" type="text" required>
+      <p class="formWarning" ng-show="dupName">Error: name already exists in database.</p>
+      <input type="submit" ng-disabled="formInfo.disableForm" value="Create Solar Installation">
+      <p class="formWarning">You have {{formInfo.numRemaining}}
+        <ng-pluralize count="formInfo.numRemaining" when="{'1':'install', 'other':'installs'}"></ng-pluralize>
+         left!</p>
+    </div>
   </div>
 </form>
