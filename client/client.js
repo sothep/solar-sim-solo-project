@@ -14,13 +14,15 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       controller: 'HomeController'
     }).when('/create', {
       templateUrl: 'views/create.html',
-      controller: 'CreateController'
+      controller: 'CreateController',
+      resolve: {
+        numInstallResponse: ['$http', 'SolarService', function($http, SolarService){
+          return SolarService.numInstalls();
+        }]
+      }
     }).when('/view', {
       templateUrl: 'views/view.html',
       controller: 'ViewController'
-    }).when('/tooManyInstalls', {
-      templateUrl: 'views/tooMany.html',
-      controller: 'WarningController'
     }).otherwise({
       templateUrl: 'views/login.html',
       controller: 'LoginController'
@@ -46,6 +48,10 @@ app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiS
       if (response.data == 'failure') signOut();
     });
   };
+  this.isNavButtonActive = function(path){
+    if ($location.path().toString() === path) return 'active';
+    else return false;
+  };
   $interval(checkServerLogin, 30000);
 }]);
 
@@ -53,7 +59,7 @@ app.controller('LoginController', ['$scope', '$location', 'AuthentiService', fun
   $scope.user = {
     username: "",
     password: ""
-  }
+  };
   $scope.badLogin = false;
 
   $scope.resetFlags = function(){
@@ -83,7 +89,7 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
   $scope.user = {
     username: "",
     password: ""
-  }
+  };
   $scope.passwordConfirm = "";
 
   var resetFlags = function(){
@@ -148,15 +154,18 @@ app.controller('ViewController', ['$scope', '$location', 'AuthentiService', 'Sol
   $scope.getInstalls();
 }]);
 
-app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'SolarService', function($scope, $location, AuthentiService, SolarService){
+app.controller('CreateController', ['$scope', '$location', 'numInstallResponse', 'AuthentiService', 'SolarService', function($scope, $location, numInstallResponse, AuthentiService, SolarService){
   if (!AuthentiService.loggedIn()) $location.path('/login');
-  $scope.numRemaining = MAX_INSTALLS_PERMITTED;
-  SolarService.numInstalls().then(function(response){
-    $scope.numRemaining -= response.data.count;
-    if ($scope.numRemaining <= 0){
-      $location.path('/tooManyInstalls');
-    }
-  });
+  var numInstalls = numInstallResponse.data.count;
+  var checkInstallStatus = function(){
+    if (numInstalls >= MAX_INSTALLS_PERMITTED) return true;
+    else return false;
+  };
+  $scope.formInfo = {
+    numRemaining: MAX_INSTALLS_PERMITTED - numInstalls,
+    disableForm: checkInstallStatus()
+  }
+
   $scope.error = null;
   $scope.dupName = false;
   $scope.suggestedTilt = "";//set equal to latitude
@@ -201,6 +210,12 @@ app.controller('CreateController', ['$scope', '$location', 'AuthentiService', 'S
     });
   };
 }]);
+
+// CreateController.resolve = {
+//   numInstalls: ['$http', 'SolarService', function($http, SolarService){
+//     return SolarService.numInstalls();
+//   }]
+// };
 
 app.factory('SolarService', ['$http', function($http){
   var newInstall = function(installData){

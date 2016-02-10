@@ -11,14 +11,19 @@
     <base href="/">
   </head>
   <body ng-controller="MainController as mainControl">
-    <div ng-show="mainControl.loggedIn()">
-      <a href="/"><button>Go Home</button></a>
-      <button ng-click="mainControl.signOut()">Sign Out</button>
-      <a href="/view"><button>View Saved Installations</button></a>
-      <a href="/create"><button>Create New Installation</button></a>
-    </div>
-    <h1>This thing on?</h1>
-    <div ng-view>
-    </div>
+    <!-- <div class="main"> -->
+      <div class="sidebar">
+        <div class="controls" ng-show="mainControl.loggedIn()">
+          <a href="/"><button class="nav" ng-class="mainControl.isNavButtonActive('/')">Home</button></a>
+          <a href="/view"><button class="nav" ng-class="mainControl.isNavButtonActive('/view')">View Saved Solar Installations</button></a>
+          <a href="/create"><button class="nav" ng-class="mainControl.isNavButtonActive('/create')">Create New Solar Installation</button></a>
+          <button class="nav signOut" ng-click="mainControl.signOut()">Sign Out</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="angularView" ng-view>
+        </div>
+      </div>
+    <!-- </div> -->
   </body>
 </html>

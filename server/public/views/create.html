@@ -1,5 +1,12 @@
 <h2>In the create page!</h2>
 
+<div class='warningPopup' ng-show="formInfo.disableForm">
+  <h2>You have reached the maximum number of installations.</h2>
+  <h4>If you would like to create more, please delete one or more
+    installations first...</h4>
+  <a href="/view"><button>View Saved Installations</button></a>
+</div>
+
 <form class="createForm" ng-submit="newSolarInstall()">
   <div class="createContainer">
 
@@ -16,7 +23,9 @@
   <div class="createContainerFloor">
     <input ng-model="installData.name" type="text" required>
     <p class="formWarning" ng-show="dupName">Error: name already exists in database.</p>
-    <input type="submit" value="Create Solar Installation">
-    <p class="formWarning">You have {{numRemaining}} installs left!</p>
+    <input type="submit" ng-disabled="formInfo.disableForm" value="Create Solar Installation">
+    <p class="formWarning">You have {{formInfo.numRemaining}}
+      <ng-pluralize count="formInfo.numRemaining" when="{'1':'install', 'other':'installs'}"></ng-pluralize>
+       left!</p>
   </div>
 </form>

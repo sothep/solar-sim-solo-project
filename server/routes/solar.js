@@ -24,7 +24,6 @@ router.get('/numInstalls', function(request, response){
     var installCount = {
       count: installs.installs.length
     }
-    console.log("number of installs:", installCount.count);
     response.send(JSON.stringify(installCount));
   });
 });
@@ -40,7 +39,6 @@ router.get('/userInstalls', function(request, response){
       response.send('failure');
       return;
     }
-    console.log(installs);
     response.send(JSON.stringify(installs));
   });
 });
@@ -56,7 +54,6 @@ router.delete('/install/:id', function(request, response){
       response.send('failure');
       return;
     }
-    console.log('install ID to delete:', installId);
     user.installs.pull({ _id: installId });
     user.save(function(err, result){
       if (err) {
