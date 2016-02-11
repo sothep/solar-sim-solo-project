@@ -2,16 +2,17 @@
 <html lang="en" ng-app="SolarApp">
   <head>
     <meta charset="utf-8">
-    <title>Solar-Sim (Working Title...)</title>
-    <link rel="stylesheet" href="styles/style.css">
+    <title>PVSim</title>
     <script type="text/javascript" src="scripts/vendors/angular/angular.min.js"></script>
     <script type="text/javascript" src="scripts/vendors/angular-route/angular-route.min.js"></script>
     <script type="text/javascript" src="scripts/vendors/angular-cookies/angular-cookies.min.js"></script>
+    <script type="text/javascript" src="scripts/vendors/tr-ng-grid/trNgGrid.min.js"></script>
     <script type="text/javascript" src="scripts/assets/client.min.js"></script>
+    <link rel="stylesheet" href="scripts/vendors/tr-ng-grid/trNgGrid.min.css">
+    <link rel="stylesheet" href="styles/style.css">
     <base href="/">
   </head>
   <body ng-controller="MainController as mainControl">
-    <!-- <div class="main"> -->
       <div class="sidebar">
         <div class="controls" ng-show="mainControl.loggedIn()">
           <a href="/"><button class="nav" ng-class="mainControl.isNavButtonActive('/')">Home</button></a>
@@ -24,6 +25,5 @@
         <div class="angularView" ng-view>
         </div>
       </div>
-    <!-- </div> -->
   </body>
 </html>

@@ -3,16 +3,70 @@
 <form class="createForm" ng-submit="newSolarInstall()">
   <div class="columnHolder">
     <div class="createContainer right">
-      Hmm...
-
+      <div class="colControls">
+        <label class="colControlLabel" for="capacityKW">System Capacity (kW)</label>
+        <input class="geocode" ng-model="installData.capacityKW" type="number" min="1" max="500000" step="0.1" id="capacityKW">
+      </div>
+      <div class="colControls">
+        <label class="colControlLabel" for="percentLosses">Est. System Losses (%)</label>
+        <input class="geocode" ng-model="installData.percentLosses" type="number" min="0" max="99" step="0.1" id="longitude">
+      </div>
+      <br>
+      <div class="colControls">
+        <!-- Array Values: 0, 1, or 2 -->
+        <div class="radioHolder">
+          <input type="radio" class="radioControl" ng-model="installData.moduleType" value="0" id="standard" name="standard">
+          <label class="radioControlLabel" for="standard">Standard</label>
+        </div>
+        <br>
+        <div class="radioHolder">
+          <input type="radio" class="radioControl" ng-model="installData.moduleType" value="1" id="premium" name="premium">
+          <label class="radioControlLabel" for="premium">Premium</label>
+        </div>
+        <br>
+        <div class="radioHolder">
+          <input type="radio" class="radioControl" ng-model="installData.moduleType" value="2" id="thinFilm" name="thinFilm">
+          <label class="radioControlLabel" for="thinFilm">Thin Film</label>
+        </div>
+      </div>
     </div>
     <div class="createContainer left">
-      Hello?
-
+      <div class="colControls">
+        <label class="colControlLabel" for="latitude">Latitude</label>
+        <input class="geocode" ng-model="installData.latitude" type="number" min="-89" max="89" step="0.01" id="latitude">
+      </div>
+      <div class="colControls">
+        <label class="colControlLabel" for="longitude">Longitude</label>
+        <input class="geocode" ng-model="installData.longitude" type="number" min="-179" max="179" step="0.01" id="longitude">
+      </div>
     </div>
     <div class="createContainer middle">
-      You there?
-
+      <div class="colControls">
+        <!-- Array Values: 0, 1, or 4 -->
+        <div class="radioHolder">
+          <input type="radio" class="radioControl" ng-model="installData.arrayType" value="1" id="roof" name="roof">
+          <label class="radioControlLabel" for="roof">  Roof-Mounted (Fixed Position)</label>
+        </div>
+        <br>
+        <div class="radioHolder">
+          <input type="radio" class="radioControl" ng-model="installData.arrayType" value="0" id="openRack" name="openRack">
+          <label class="radioControlLabel" for="openRack">  Open Rack (Fixed Position)</label>
+        </div>
+        <br>
+        <div class="radioHolder">
+          <input type="radio" class="radioControl" ng-model="installData.arrayType" value="4" id="twoAxis" name="twoAxis">
+          <label class="radioControlLabel" for="twoAxis">  Two-Axis Tracking</label>
+        </div>
+      </div>
+      <br>
+      <div class="colControls">
+        <label class="colControlLabel" for="tilt">Tilt</label>
+        <input class="geocode" ng-model="installData.tilt" type="number" min="0" max="90" step="0.1" id="tilt">
+      </div>
+      <div class="colControls">
+        <label class="colControlLabel" for="azimuth">Azimuth</label>
+        <input class="geocode" ng-model="installData.azimuth" type="number" min="0" max="359" step="0.1" id="azimuth">
+      </div>
     </div>
   </div>
   <div class="createContainerFloor">
@@ -30,9 +84,20 @@
   </div>
 </form>
 
+<div class='warningPopup' ng-show="error">
+  <div class='warningContainer'>
+    <h2 class="warning">Solar Data Unavailable</h2>
+    <h4 class="warningInfo">Weather station data is not available from all locations.  If you are seeing
+    this error multiple times regardless of location, there may be a problem with
+    the API server - please try again later.</h4>
+    <button class="warningButton" ng-click="resetFlags()">Okay</button>
+  </div>
+</div>
+
 <div class='warningPopup' ng-show="formInfo.disableForm">
-  <h2>You have reached the maximum number of installations.</h2>
-  <h4>If you would like to create more, please delete one or more
-    installations first...</h4>
-  <a href="/view"><button>View Saved Installations</button></a>
+  <div class='warningContainer'>
+    <h2 class="warning">You have reached the maximum number of installations.</h2>
+    <h4 class="warningInfo">Please delete one or more saved installations to continue.</h4>
+    <a href="/view"><button class="warningButton">View Saved Installations</button></a>
+  </div>
 </div>

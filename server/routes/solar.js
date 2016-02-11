@@ -11,7 +11,7 @@ var router = express.Router();
 router.use(bodyParser.json());
 
 router.get('/numInstalls', function(request, response){
-  confirmLogin(request, response);
+  if (!confirmLogin(request, response)) return;
   var userId = request.user._id;
   var installQuery = SolarUser.findById(userId);
   installQuery.select('installs');
@@ -29,7 +29,7 @@ router.get('/numInstalls', function(request, response){
 });
 
 router.get('/userInstalls', function(request, response){
-  confirmLogin(request, response);
+  if (!confirmLogin(request, response)) return;
   var userId = request.user._id;
   var installQuery = SolarUser.findById(userId);
   installQuery.select('installs');
@@ -44,7 +44,7 @@ router.get('/userInstalls', function(request, response){
 });
 
 router.delete('/install/:id', function(request, response){
-  confirmLogin(request, response);
+  if (!confirmLogin(request, response)) return;
   var userId = request.user._id;
   var installId = request.params.id;
 
@@ -68,7 +68,7 @@ router.delete('/install/:id', function(request, response){
 });
 
 router.post('/new', function(request, response){
-  confirmLogin(request, response);
+  if (!confirmLogin(request, response)) return;
   getSolarData(request).then(function(res){
     var userId = request.user._id;
     var newInstall = newSolarInstall(res, request.body.name);
@@ -91,8 +91,9 @@ router.post('/new', function(request, response){
 function confirmLogin(request, response){
   if (!request.user) {
     response.redirect('/signout');
-    return;
+    return false;
   }
+  else return true;
 }
 
 function newSolarInstall(APIData, installName){

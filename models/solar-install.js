@@ -24,6 +24,5 @@ var SolarSchema = new Schema({
   dc_annual: { type: Number, required: true },
   ac_annual: { type: Number, required: true }
 });
-// }, { _id: false });
 
 module.exports = mongoose.model('SolarSchema', SolarSchema);

@@ -1,5 +1,6 @@
-var app = angular.module('SolarApp', ['ngRoute', 'ngCookies']);
+var app = angular.module('SolarApp', ['ngRoute', 'ngCookies', 'trNgGrid']);
 var MAX_INSTALLS_PERMITTED = 5;
+var DEG_SYMBOL = '\u00B0';
 
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
   $routeProvider
@@ -130,9 +131,10 @@ app.controller('WarningController', ['$scope', '$location', 'AuthentiService', f
   if (!AuthentiService.loggedIn()) $location.path('/login');
 }]);
 
-app.controller('ViewController', ['$scope', '$location', 'AuthentiService', 'SolarService', function($scope, $location, AuthentiService, SolarService){
+app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiService', 'SolarService', function($scope, $location, $filter, AuthentiService, SolarService){
   if (!AuthentiService.loggedIn()) $location.path('/login');
   $scope.installData = [];
+  $scope.tableData = [];
   $scope.selectedInstall = null;
   $scope.error = null;
 
@@ -140,12 +142,47 @@ app.controller('ViewController', ['$scope', '$location', 'AuthentiService', 'Sol
     SolarService.getInstalls().then(function(response){
       if (response.data && response.data.installs){
         $scope.installData = response.data.installs;
+        setTableData();
       }
       else {
         $scope.error = "Error connecting to PVWatts5 API.  Please try again later.";
       }
     });
   }
+
+  var setTableData = function(){
+    for (var i = 0; i < $scope.installData.length; i++){
+      var data = $scope.installData[i];
+      $scope.tableData.push({
+        "Name": data.name,
+        "Created": $filter('date')(data.created, "MM/dd/yy"),
+        "Location": formatGeocode(data.location.lat, data.location.long),
+        "Jan": data.dc_monthly[0].toFixed(1),
+        "Feb": data.dc_monthly[1].toFixed(1),
+        "Mar": data.dc_monthly[2].toFixed(1),
+        "Apr": data.dc_monthly[3].toFixed(1),
+        "May": data.dc_monthly[4].toFixed(1),
+        "Jun": data.dc_monthly[5].toFixed(1),
+        "Jul": data.dc_monthly[6].toFixed(1),
+        "Aug": data.dc_monthly[7].toFixed(1),
+        "Sep": data.dc_monthly[8].toFixed(1),
+        "Oct": data.dc_monthly[9].toFixed(1),
+        "Nov": data.dc_monthly[10].toFixed(1),
+        "Dec": data.dc_monthly[11].toFixed(1),
+      });
+    }
+  };
+
+  var formatGeocode = function(longitude, latitude){
+    var northSouth, eastWest;
+    if (longitude > 0) eastWest = "E";
+    else eastWest = "W";
+    if (latitude > 0) northSouth = "N";
+    else northSouth = "S";
+
+    return latitude + DEG_SYMBOL + " " + northSouth + ", " + longitude + DEG_SYMBOL + " " + eastWest;
+  };
+
   $scope.deleteInstall = function(installId){
     SolarService.deleteInstall(installId).then(function(response){
       $scope.getInstalls();
@@ -171,15 +208,14 @@ app.controller('CreateController', ['$scope', '$location', 'numInstallResponse',
   $scope.suggestedTilt = "";//set equal to latitude
   $scope.suggestedAzi = "";//0 for southern hemisphere; 180 for northern
   $scope.installData = { //initialize to default values
-    name: "", //***MAKE THIS BLANK & html-required
-    latitude: 40, //*** html-required
-    longitude: -105, //*** html-required
-    //add html-form min/max for all below...
+    name: "",
+    latitude: 40,
+    longitude: -105,
     tilt: 40,
     azimuth: 180,
     capacityKW: 4,
     percentLosses: 14,
-    arrayType: 0,
+    arrayType: 1,
     moduleType: 0
   };
 
@@ -204,7 +240,7 @@ app.controller('CreateController', ['$scope', '$location', 'numInstallResponse',
             $location.path('/view');
           }
           else {
-            $scope.error = "Error connecting to PVWatts5 API.  Please try again later.";
+            $scope.error = true
           }
         });
     });

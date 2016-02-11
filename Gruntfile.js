@@ -25,6 +25,8 @@ module.exports = function(grunt) {
                     "angular/angular.min.js",
                     "angular-route/angular-route.min.js",
                     "angular-cookies/angular-cookies.min.js",
+                    "tr-ng-grid/trNgGrid.min.css",
+                    "tr-ng-grid/trNgGrid.min.js",
                     "angular/angular.min.js.map",
 					          "angular/angular-csp.css"
                 ],

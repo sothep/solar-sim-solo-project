@@ -1,7 +1,20 @@
 <div class="pageTitle"><h1>View Solar Installations</h1></div>
-<ul>
-  <li ng-repeat="install in installData track by $index">
-    <button ng-click="deleteInstall(install._id)">Delete</button>
-    <p>{{ install.name }}</p>
-  </li>
-</ul>
+<div class="textHolder">
+  <!-- <ul>
+    <li ng-repeat="install in installData track by $index">
+      <button ng-click="deleteInstall(install._id)">Delete</button>
+      <p>{{ install.name }}</p>
+    </li>
+  </ul> -->
+
+  <table tr-ng-grid="" items="tableData" cell-width="80px" enable-filtering="false">
+    <!-- <tbody>
+      <tr>
+        <th field-name="name" display-name="Name"></th>
+        <th field-name="created" display-name="Creation Date"></th>
+        <th field-name="dc_monthly[0]" display-name="Jan"></th>
+      </tr>
+    </tbody> -->
+  </table>
+
+</div>
