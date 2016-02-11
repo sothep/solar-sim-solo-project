@@ -1,11 +1,4 @@
-<h2>In the create page!</h2>
-
-<div class='warningPopup' ng-show="formInfo.disableForm">
-  <h2>You have reached the maximum number of installations.</h2>
-  <h4>If you would like to create more, please delete one or more
-    installations first...</h4>
-  <a href="/view"><button>View Saved Installations</button></a>
-</div>
+<div class="pageTitle"><h1>New Solar Installation</h1></div>
 
 <form class="createForm" ng-submit="newSolarInstall()">
   <div class="columnHolder">
@@ -23,13 +16,23 @@
     </div>
   </div>
   <div class="createContainerFloor">
+    <div class="floorPadding"></div>
     <div class="floorControls">
-      <input ng-model="installData.name" type="text" required>
+         <input class="submitButton" type="submit" ng-disabled="formInfo.disableForm" value="Create Solar Installation">
+    </div>
+    <div class="floorControls">
+      <label class="submitLabel" for="installName">Installation Name</label>
+      <input ng-model="installData.name" type="text" id="installName" required>
       <p class="formWarning" ng-show="dupName">Error: name already exists in database.</p>
-      <input type="submit" ng-disabled="formInfo.disableForm" value="Create Solar Installation">
-      <p class="formWarning">You have {{formInfo.numRemaining}}
-        <ng-pluralize count="formInfo.numRemaining" when="{'1':'install', 'other':'installs'}"></ng-pluralize>
-         left!</p>
+      <p class="formWarning">Create up to {{formInfo.numRemaining}} more
+        <ng-pluralize count="formInfo.numRemaining" when="{'1':'installation', 'other':'installations'}"></ng-pluralize>!</p>
     </div>
   </div>
 </form>
+
+<div class='warningPopup' ng-show="formInfo.disableForm">
+  <h2>You have reached the maximum number of installations.</h2>
+  <h4>If you would like to create more, please delete one or more
+    installations first...</h4>
+  <a href="/view"><button>View Saved Installations</button></a>
+</div>
