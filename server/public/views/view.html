@@ -7,14 +7,12 @@
     </li>
   </ul> -->
 
-  <table tr-ng-grid="" items="tableData" cell-width="80px" enable-filtering="false">
-    <!-- <tbody>
+  <table tr-ng-grid="" items="tableData" enable-sorting="true" page-items="5" fields="['Name', 'Created', 'Location', 'Power', 'Losses', 'Placement', 'Panel']">
+    <tbody>
       <tr>
-        <th field-name="name" display-name="Name"></th>
-        <th field-name="created" display-name="Creation Date"></th>
-        <th field-name="dc_monthly[0]" display-name="Jan"></th>
+        <td><button class="delButton" ng-click="deleteInstall(gridItem.id)">Delete</button></td>
       </tr>
-    </tbody> -->
+    </tbody>
   </table>
 
 </div>

@@ -135,6 +135,7 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
   if (!AuthentiService.loggedIn()) $location.path('/login');
   $scope.installData = [];
   $scope.tableData = [];
+  $scope.tableIds = [];
   $scope.selectedInstall = null;
   $scope.error = null;
 
@@ -151,36 +152,57 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
   }
 
   var setTableData = function(){
+    $scope.tableData = [];
     for (var i = 0; i < $scope.installData.length; i++){
       var data = $scope.installData[i];
       $scope.tableData.push({
+        "id": data._id,
         "Name": data.name,
         "Created": $filter('date')(data.created, "MM/dd/yy"),
-        "Location": formatGeocode(data.location.lat, data.location.long),
-        "Jan": data.dc_monthly[0].toFixed(1),
-        "Feb": data.dc_monthly[1].toFixed(1),
-        "Mar": data.dc_monthly[2].toFixed(1),
-        "Apr": data.dc_monthly[3].toFixed(1),
-        "May": data.dc_monthly[4].toFixed(1),
-        "Jun": data.dc_monthly[5].toFixed(1),
-        "Jul": data.dc_monthly[6].toFixed(1),
-        "Aug": data.dc_monthly[7].toFixed(1),
-        "Sep": data.dc_monthly[8].toFixed(1),
-        "Oct": data.dc_monthly[9].toFixed(1),
-        "Nov": data.dc_monthly[10].toFixed(1),
-        "Dec": data.dc_monthly[11].toFixed(1),
+        "Location": formatGeocode(data.location.long, data.location.lat),
+        "Power": (data.panel.capacity + " kW"),
+        "Losses": (data.panel.losses + "%"),
+        "Placement": formatPanelData(data.panel.array_type),
+        "Panel": formatModuleData(data.panel.module_type)
       });
     }
   };
 
   var formatGeocode = function(longitude, latitude){
+    var tempLong = longitude.toFixed(1);
+    var tempLat = latitude.toFixed(1);
     var northSouth, eastWest;
     if (longitude > 0) eastWest = "E";
-    else eastWest = "W";
+    else {
+      eastWest = "W";
+      tempLong = tempLong/(-1);
+    }
     if (latitude > 0) northSouth = "N";
-    else northSouth = "S";
+    else {
+      northSouth = "S";
+      tempLat = tempLat/(-1);
+    }
+    return tempLat + DEG_SYMBOL + " " + northSouth + ", " + tempLong + DEG_SYMBOL + " " + eastWest;
+  };
 
-    return latitude + DEG_SYMBOL + " " + northSouth + ", " + longitude + DEG_SYMBOL + " " + eastWest;
+  var formatSystemData = function(capacity, losses){
+    return capacity + "kW, est. " + losses + "% loss";
+  }
+
+  var formatPanelData = function(arrayType){
+    switch(arrayType){
+      case 1: return "Roof-Mounted";
+      case 4: return "2-Axis Tracking";
+      default: return "Open Rack";
+    }
+  };
+
+  var formatModuleData = function(moduleType){
+    switch(moduleType){
+      case 0: return "Standard";
+      case 1: return "Premium";
+      default: return "Thin Film";
+    }
   };
 
   $scope.deleteInstall = function(installId){
@@ -247,11 +269,6 @@ app.controller('CreateController', ['$scope', '$location', 'numInstallResponse',
   };
 }]);
 
-// CreateController.resolve = {
-//   numInstalls: ['$http', 'SolarService', function($http, SolarService){
-//     return SolarService.numInstalls();
-//   }]
-// };
 
 app.factory('SolarService', ['$http', function($http){
   var newInstall = function(installData){

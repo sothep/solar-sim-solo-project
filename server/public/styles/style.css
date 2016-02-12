@@ -98,7 +98,7 @@ label.submitLabel {
   /*overflow-y: scroll;*/
   width: 70%;
   height: auto;
-  min-width: 700px;
+  min-width: 830px;
   min-height: 400px;
   margin: 10px 30px;
   /*padding-bottom: 15px;*/
@@ -269,4 +269,54 @@ label.submitLabel {
   padding: 10px;
   font: 18px/22px "Arial", sans-serif;
   color: white;
+}
+
+.tr-ng-grid {
+  background-color: #444444;
+  color: white;
+  border: 1px solid darkgray;
+  border-radius: 3px;
+  padding: 5px;
+}
+
+.tr-ng-column-filter, .input-sm {
+  max-width: 100px;
+  text-align: center;
+}
+
+.tr-ng-cell {
+  max-width: 110px;
+  font: 14px/16px "Arial", sans-serif;
+  text-align: center;
+}
+
+.tr-ng-title {
+  font-weight: bold;
+  font-size: 15px;
+  color: #EEEEEE;
+}
+
+.tr-ng-grid-footer {
+  margin-top: 10px;
+  font: 12px/14px "Arial", sans-serif;
+}
+
+.tr-ng-grid-footer .form-control {
+  margin-bottom: 10px;
+}
+
+.pagination li {
+  display: inline;
+}
+
+.pagination a {
+  margin: 3px;
+  color: orange;
+  /*font-style: italic;*/
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.delButton {
+  color: red;
 }
