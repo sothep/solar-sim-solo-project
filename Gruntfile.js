@@ -28,7 +28,8 @@ module.exports = function(grunt) {
                     "tr-ng-grid/trNgGrid.min.css",
                     "tr-ng-grid/trNgGrid.min.js",
                     "angular/angular.min.js.map",
-					          "angular/angular-csp.css"
+					          "angular/angular-csp.css",
+                    "d3/d3.min.js"
                 ],
                 "dest": "server/public/scripts/vendors/"
             }

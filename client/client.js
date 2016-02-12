@@ -1,5 +1,6 @@
 var app = angular.module('SolarApp', ['ngRoute', 'ngCookies', 'trNgGrid']);
-var MAX_INSTALLS_PERMITTED = 5;
+var MAX_INSTALLS_PERMITTED = 10;
+//Note regarding above: currently selected D3 palette contains 10 colors
 var DEG_SYMBOL = '\u00B0';
 
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
@@ -163,10 +164,98 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
         "Power": (data.panel.capacity + " kW"),
         "Losses": (data.panel.losses + "%"),
         "Placement": formatPanelData(data.panel.array_type),
-        "Panel": formatModuleData(data.panel.module_type)
+        "Panel": formatModuleData(data.panel.module_type),
+        "AC_monthly_kWh": data.ac_monthly
       });
     }
+    setGraphData();
   };
+
+  //-------------------------------------------------
+  //&&&&&&&&&&*****D3 Graph Generation*****&&&&&&&&&&
+  //-------------------------------------------------
+
+  var gWidth = 600;
+  var gHeight = 360;
+  var pad = 50;
+
+  var gData = [];
+  var legendInfo = [];
+  var palette = d3.scale.category10();
+
+  var setGraphData = function(){
+    gData = [];
+    for (var i = 0; i < $scope.tableData.length; i++){
+      gData.push([]);
+      for (var j = 0; j < $scope.tableData[i].AC_monthly_kWh.length; j++){
+        gData[gData.length - 1].push({x: j, y:  $scope.tableData[i].AC_monthly_kWh[j]});
+      }
+      legendInfo.push({'name': $scope.tableData[i].Name, 'color': palette(i)});
+    }
+    console.log('gData:', gData);
+    console.log('legendInfo:', legendInfo);
+
+    var yRange = d3.extent(d3.merge(gData), function(axisData){ return axisData.y; });
+    var xRange = d3.extent(d3.merge(gData), function(axisData){ return axisData.x; });
+    yRange[0] = 0; //override y-min value to be zero
+
+    var xScale = d3.scale.linear()
+      .domain([xRange[0], xRange[1]])
+      .range([pad, gWidth - pad * 2]);
+
+    var yScale = d3.scale.linear()
+      .domain([yRange[0], yRange[1]])
+      .range([gHeight - pad, pad]);
+
+    d3.select("svg").remove(); //clear chart for rebuild
+
+    var svg = d3.select('.chartArea')
+      .append("svg")
+      .attr("width", gWidth)
+      .attr("height", gHeight);
+
+    var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(12)
+      .tickFormat(function(d){ return catLabel(d); });
+    var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(8);
+
+    svg.append("g").attr("class", "axis")
+      .attr("transform", "translate(0," + (gHeight - pad) + ")").call(xAxis);
+
+    svg.append("g").attr("class", "axis")
+      .attr("transform", "translate(" + pad + ",0)").call(yAxis);
+
+    var linePath = svg.selectAll("g.line").data(gData);
+
+    linePath.enter().append("g")
+  	  .attr("class", "line").attr("style", function(d) {
+  		     return "stroke: " + palette(gData.indexOf(d));
+  	  });
+
+	  linePath.selectAll("path").data(function (d) { return [d]; })
+	    .enter().append('path').attr("d", d3.svg.line()
+	      .x(function (d) { return xScale(d.x); })
+	       .y(function (d) { return yScale(d.y); })
+	  );
+  }
+
+
+  function catLabel(monthIndex) {
+    switch (monthIndex){
+      case 0: return "Jan";
+      case 1: return "Feb";
+      case 2: return "Mar";
+      case 3: return "Apr";
+      case 4: return "May";
+      case 5: return "Jun";
+      case 6: return "Jul";
+      case 7: return "Aug";
+      case 8: return "Sep";
+      case 9: return "Oct";
+      case 10: return "Nov";
+      case 11: return "Dec";
+    }
+  }
+
 
   var formatGeocode = function(longitude, latitude){
     var tempLong = longitude.toFixed(1);

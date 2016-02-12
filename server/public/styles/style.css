@@ -90,7 +90,8 @@ label.submitLabel {
   height: 100%;
   padding-left: 200px;
   padding-top: 30px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   top: 0px;
 }
 
@@ -100,6 +101,7 @@ label.submitLabel {
   height: auto;
   min-width: 830px;
   min-height: 400px;
+  max-height: 700px;
   margin: 10px 30px;
   /*padding-bottom: 15px;*/
   border: 2px #555555 solid;
@@ -118,7 +120,9 @@ label.submitLabel {
   width: 90%;
   margin: 10px;
   text-align: center;
-  border: 2px #005500 solid;
+  /*border: 2px #005500 solid;*/
+  /*border: 2px #444444 solid;*/
+  border: none;
   border-radius: 5px;
   background-color: #EEEEEE;
   color: #005500;
@@ -138,7 +142,7 @@ label.submitLabel {
 
 .nav.active {
   color: black;
-  border-color: #FFFF55;
+  border: 2px #FFFF55 solid;
   /*background-color: yellow;*/
   background: -webkit-radial-gradient(white, yellow, orange); /* Safari 5.1 to 6.0 */
   background: -o-radial-gradient(white, yellow, orange); /* For Opera 11.6 to 12.0 */
@@ -271,6 +275,10 @@ label.submitLabel {
   color: white;
 }
 
+/*-----------------------------*/
+/*-----trNgGrid Styling--------*/
+/*-----------------------------*/
+
 .tr-ng-grid {
   background-color: #444444;
   color: white;
@@ -319,4 +327,31 @@ label.submitLabel {
 
 .delButton {
   color: red;
+}
+
+/*-----------------------------*/
+/*--------D3 Styling-----------*/
+/*-----------------------------*/
+
+h2.chartTitle {
+  color: indigo;
+  font: 24px/26px "Arial", sans-serif;
+  text-align: center;
+}
+
+.chartArea {
+  height: 100%;
+  display: block;
+  text-align: center;
+}
+
+.domain {
+  fill: none;
+  stroke: black;
+  stroke-width: 2;
+}
+
+.line {
+  stroke-width: 1.5px;
+  fill: none;
 }
