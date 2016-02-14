@@ -80,7 +80,6 @@ label.submitLabel {
   width: 180px;
   padding: 10px;
   padding-top: 30px;
-  /*background-color: #77DD77;*/
   background: rgba(0, 0, 0, 0.6);
 }
 
@@ -105,6 +104,80 @@ label.submitLabel {
   border: 2px #555555 solid;
   border-radius: 5px;
   background-color: #FEFEFE;
+}
+
+.angularView.short {
+  min-height: 410px;
+}
+
+.regContainer {
+  display: inline-block;
+  float: left;
+  margin: 5px 10px;
+  padding: 5px 10px 40px 10px;
+}
+
+.regImgContainer {
+  display: inline-block;
+  margin-left: 300px;
+}
+
+.regImgContainer img {
+  border: 1px darkblue solid;
+  border-radius: 3px;
+}
+
+.regLog {
+  display: inline;
+  height: 100px;
+  width: 100%;
+}
+
+.regInput {
+  margin: 10px;
+}
+
+.regInput label {
+  font: bold 16px "Arial", sans-serif;
+}
+
+.regInput input {
+  font: italic 14px "Arial", sans-serif;
+}
+
+.regSubmit {
+  margin: 10px;
+}
+
+.regSubmit input, .regSubmit button {
+  display: inline-block;
+  border: none;
+  border-radius: 3px;
+  height: 30px;
+  background-color: green;
+  padding: 7px;
+  font: 16px/18px "Arial", sans-serif;
+  color: white;
+  margin: 20px 10px 0 0;
+}
+
+.regSubmit button {
+  background-color: darkorange;
+  font: 16px/18px "Arial", sans-serif;
+  color: white;
+  margin-left: 5px;
+}
+
+.regInstructions {
+  margin: 15px 15px 25px 15px;
+  padding: 5px 10px;
+  font: 20px/22px "Georgia", serif;
+}
+
+.regInstructions span {
+  font-style: italic;
+  font-weight: bold;
+  color: darkblue;
 }
 
 @keyframes fadeIn {

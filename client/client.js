@@ -47,7 +47,10 @@ app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiS
   var checkServerLogin = function(){
     AuthentiService.serverLoggedIn().then(function(response){
       console.log('checking login status with server...');
-      if (response.data == 'failure') signOut();
+      if (response.data == 'failure') {
+        if ($location.path().toString() === '/register' || $location.path().toString() === '/login') return;
+        signOut();
+      }
     });
   };
   this.isNavButtonActive = function(path){
@@ -58,6 +61,7 @@ app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiS
 }]);
 
 app.controller('LoginController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
+  $scope.pageClass = "short";
   $scope.user = {
     username: "",
     password: ""
@@ -66,9 +70,6 @@ app.controller('LoginController', ['$scope', '$location', 'AuthentiService', fun
 
   $scope.resetFlags = function(){
     $scope.badLogin = false;
-  };
-  $scope.register = function(){
-    $location.path('/register');
   };
   $scope.login = function(){
     $scope.resetFlags();
@@ -86,6 +87,7 @@ app.controller('LoginController', ['$scope', '$location', 'AuthentiService', fun
 }]);
 
 app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
+  $scope.pageClass = "short";
   $scope.userExists = false;
   $scope.badLogin = false;
   $scope.user = {
@@ -102,6 +104,7 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
 
   $scope.register = function(){
     resetFlags();
+    console.log('hello?');
     if ($scope.user.password != $scope.passwordConfirm){
       $scope.passwordUnmatched = true;
       return;
@@ -126,6 +129,7 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
 
 app.controller('HomeController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
   if (!AuthentiService.loggedIn()) $location.path('/login');
+  $scope.pageClass = "short";
 }]);
 
 app.controller('WarningController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){

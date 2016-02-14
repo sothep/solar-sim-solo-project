@@ -1,18 +1,25 @@
 <div class="pageTitle"><h1>Welcome to PVsim!</h1></div>
-<form class="regLog" ng-submit="login()">
-  <div>
-    <label for="username">Username:</label>
-    <input ng-model="user.username" type="text" name="username" id="username" required/>
-  </div>
-  <div>
-    <label for="password">Password:</label>
-    <input ng-model="user.password" type="password" name="password" id="password" required/>
-  </div>
-  <div ng-show="badLogin">
-    <p class="formWarning">Invalid username and/or password.</p>
-  </div>
-  <div>
-    <input type="submit" value="Login">
-    <button ng-click="register()">Create Account</button>
-  </div>
-</form>
+<p class="regInstructions"><span>PVsim</span> is a free tool to learn about solar photovoltaics.
+    <br><br>Simulate your own solar panel installations anywhere in the country, and compare their energy performance!</p>
+<div class="regImgContainer">
+  <img src="images/preview.png" style="height: 200px">
+</div>
+<div class="regContainer">
+  <form class="regLog" ng-submit="login()">
+    <div class="regInput">
+      <label for="username">Username:</label>
+      <input ng-model="user.username" type="text" name="username" id="username" required/>
+    </div>
+    <div class="regInput">
+      <label for="password">Password:</label>
+      <input ng-model="user.password" type="password" name="password" id="password" required/>
+    </div>
+    <div ng-show="badLogin">
+      <p class="formWarning">Invalid username and/or password.</p>
+    </div>
+    <div class="regSubmit">
+      <input type="submit" value="Login">
+      <a href="/register"><button>Create Account</button></a>
+    </div>
+  </form>
+</div>

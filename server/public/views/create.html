@@ -40,10 +40,9 @@
     <div class="createContainer left">
       <p class="pageInstructions">Choose a location</p>
       <p class="pageDetails"><br>
-        Indicate the <span>latitude</span> and <span>longitude</span> where you
+        Enter the <span>latitude</span> and <span>longitude</span> where you
         would like to place your installation.<br><br>
-        Note that most available locations are within the United States.  Data may
-        not be available for all locations.
+        Data may not be available for all locations.  Locations within the United States will have the best availability.
       </p><br>
       <hr><br>
       <div class="colControls textControls">
@@ -85,7 +84,7 @@
         <div class="controlBlock textControl">
           <label class="colControlLabel" for="tilt">Tilt <span>(deg)</span></label>
           <input class="geocode" ng-model="installData.tilt" ng-disabled="installData.arrayType > 1" type="number" min="0" max="90" step="0.1" id="tilt">
-          <label class="controlRecommendation" for="tilt">Recommended: equal to location latitude</label>
+          <label class="controlRecommendation" for="tilt">Recommended: set tilt equal to latitude</label>
         </div>
         <div class="controlBlock">
           <img src="/images/tilt.png" style="width: 100px; height: 100px">
