@@ -3,72 +3,106 @@
 <form class="createForm" ng-submit="newSolarInstall()">
   <div class="columnHolder">
     <div class="createContainer right">
-      <div class="colControls">
-        <label class="colControlLabel" for="capacityKW">System Capacity (kW)</label>
+      <p class="pageInstructions">Describe your PV system</p>
+      <p class="pageDetails"><br>
+        <span>System Capacity</span> is the peak DC power rating of the panel.<br><br>
+        <span>System Loss</span> describes the inverter efficiency (DC-to-AC).<br><br>
+        <span>Different materials</span> may be used to make PV panels - choose Standard, Premium, or Thin Film.<br>
+      </p>
+      <hr>
+      <div class="colControls textControls">
+        <label class="colControlLabel" for="capacityKW">System Capacity <span>(kW)</span></label>
         <input class="geocode" ng-model="installData.capacityKW" type="number" min="1" max="500000" step="0.1" id="capacityKW">
       </div>
-      <div class="colControls">
-        <label class="colControlLabel" for="percentLosses">Est. System Losses (%)</label>
+      <div class="colControls textControls">
+        <label class="colControlLabel" for="percentLosses">Est. System Loss <span>(%)</span></label>
         <input class="geocode" ng-model="installData.percentLosses" type="number" min="0" max="99" step="0.1" id="longitude">
       </div>
       <br>
-      <div class="colControls">
+      <div class="colControls radioControls">
         <!-- Array Values: 0, 1, or 2 -->
         <div class="radioHolder">
           <input type="radio" class="radioControl" ng-model="installData.moduleType" value="0" id="standard" name="standard">
-          <label class="radioControlLabel" for="standard">Standard</label>
+          <label class="radioControlLabel" for="standard">Standard <span>(14-17% efficient)</span></label>
         </div>
         <br>
         <div class="radioHolder">
           <input type="radio" class="radioControl" ng-model="installData.moduleType" value="1" id="premium" name="premium">
-          <label class="radioControlLabel" for="premium">Premium</label>
+          <label class="radioControlLabel" for="premium">Premium <span>(18-20% efficient)</span></label>
         </div>
         <br>
         <div class="radioHolder">
           <input type="radio" class="radioControl" ng-model="installData.moduleType" value="2" id="thinFilm" name="thinFilm">
-          <label class="radioControlLabel" for="thinFilm">Thin Film</label>
+          <label class="radioControlLabel" for="thinFilm">Thin Film <span>(~11% efficient)</span></label>
         </div>
       </div>
     </div>
     <div class="createContainer left">
-      <div class="colControls">
-        <label class="colControlLabel" for="latitude">Latitude</label>
+      <p class="pageInstructions">Choose a location</p>
+      <p class="pageDetails"><br>
+        Indicate the <span>latitude</span> and <span>longitude</span> where you
+        would like to place your installation.<br><br>
+        Note that most available locations are within the United States.  Data may
+        not be available for all locations.
+      </p><br>
+      <hr><br>
+      <div class="colControls textControls">
+        <label class="colControlLabel" for="latitude">Latitude <span>(deg)</span></label>
         <input class="geocode" ng-model="installData.latitude" type="number" min="-89" max="89" step="0.01" id="latitude">
       </div>
-      <div class="colControls">
-        <label class="colControlLabel" for="longitude">Longitude</label>
+      <div class="colControls textControls">
+        <label class="colControlLabel" for="longitude">Longitude <span>(deg)</span></label>
         <input class="geocode" ng-model="installData.longitude" type="number" min="-179" max="179" step="0.01" id="longitude">
       </div>
     </div>
     <div class="createContainer middle">
-      <div class="colControls">
+      <p class="pageInstructions">Position the array</p>
+      <p class="pageDetails"><br>
+        <span>Fixed position</span> arrays are mounted at a permanent <span>tilt</span> (vertical angle) and <span>azimuth</span> (compass direction).
+        For these systems, adjust tilt and azimuth manually.<br><br>
+        Arrays with <span>two-axis tracking</span> will automatically adjust tilt and azimuth for best performance.<br>
+      </p>
+      <hr>
+      <div class="colControls radioControls">
         <!-- Array Values: 0, 1, or 4 -->
         <div class="radioHolder">
           <input type="radio" class="radioControl" ng-model="installData.arrayType" value="1" id="roof" name="roof">
-          <label class="radioControlLabel" for="roof">  Roof-Mounted (Fixed Position)</label>
+          <label class="radioControlLabel" for="roof">  Roof-Mounted <span>(fixed position)</span></label>
         </div>
         <br>
         <div class="radioHolder">
           <input type="radio" class="radioControl" ng-model="installData.arrayType" value="0" id="openRack" name="openRack">
-          <label class="radioControlLabel" for="openRack">  Open Rack (Fixed Position)</label>
+          <label class="radioControlLabel" for="openRack">  Open Rack <span>(fixed position)</span></label>
         </div>
         <br>
         <div class="radioHolder">
           <input type="radio" class="radioControl" ng-model="installData.arrayType" value="4" id="twoAxis" name="twoAxis">
-          <label class="radioControlLabel" for="twoAxis">  Two-Axis Tracking</label>
+          <label class="radioControlLabel" for="twoAxis">  Two-Axis Tracking <span>(auto tilt & azimuth)</span></label>
         </div>
       </div>
       <br>
-      <div class="colControls">
-        <label class="colControlLabel" for="tilt">Tilt</label>
-        <input class="geocode" ng-model="installData.tilt" type="number" min="0" max="90" step="0.1" id="tilt">
+      <div class="colControls textControls">
+        <div class="controlBlock textControl">
+          <label class="colControlLabel" for="tilt">Tilt <span>(deg)</span></label>
+          <input class="geocode" ng-model="installData.tilt" ng-disabled="installData.arrayType > 1" type="number" min="0" max="90" step="0.1" id="tilt">
+          <label class="controlRecommendation" for="tilt">Recommended: equal to location latitude</label>
+        </div>
+        <div class="controlBlock">
+          <img src="/images/tilt.png" style="width: 100px; height: 100px">
+        </div>
       </div>
-      <div class="colControls">
-        <label class="colControlLabel" for="azimuth">Azimuth</label>
-        <input class="geocode" ng-model="installData.azimuth" type="number" min="0" max="359" step="0.1" id="azimuth">
+      <div class="colControls  textControls">
+        <div class="controlBlock textControl">
+          <label class="colControlLabel" for="azimuth">Azimuth <span>(deg)</span></label>
+          <input class="geocode" ng-model="installData.azimuth" ng-disabled="installData.arrayType == 4" type="number" min="0" max="359" step="0.1" id="azimuth">
+          <label class="controlRecommendation" for="tilt">Recommended: 180 (northern hemisphere);<br>0 (southern hemisphere)</label>
+        </div>
+        <div class="controlBlock">
+          <img src="/images/azimuth.png" style="width: 100px; height: 100px">
+        </div>
       </div>
     </div>
-  </div>
+
   <div class="createContainerFloor">
     <div class="floorPadding"></div>
     <div class="floorControls">
@@ -82,14 +116,16 @@
         <ng-pluralize count="formInfo.numRemaining" when="{'1':'installation', 'other':'installations'}"></ng-pluralize>!</p>
     </div>
   </div>
+  </div>
 </form>
 
 <div class='warningPopup' ng-show="error">
   <div class='warningContainer'>
     <h2 class="warning">Solar Data Unavailable</h2>
-    <h4 class="warningInfo">Weather station data is not available from all locations.  If you are seeing
-    this error multiple times regardless of location, there may be a problem with
-    the API server - please try again later.</h4>
+    <h4 class="warningInfo">Weather station data is not available from all locations.</h4>
+    <br>
+    <h4 class="warningInfo">If you are seeing this error many locations in the continental United States, there may be a problem with
+    the API server.  Please try again later.</h4>
     <button class="warningButton" ng-click="resetFlags()">Okay</button>
   </div>
 </div>

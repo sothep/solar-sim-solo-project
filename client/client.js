@@ -1,6 +1,6 @@
-var app = angular.module('SolarApp', ['ngRoute', 'ngCookies', 'trNgGrid']);
+var app = angular.module('SolarApp', ['ngRoute', 'ngCookies', 'ngAnimate', 'trNgGrid']);
 var MAX_INSTALLS_PERMITTED = 10;
-//Note regarding above: currently selected D3 palette contains 10 colors
+//Note regarding above: currently selected D3 palette contains 10 colors - search for "d3.scale.category"
 var DEG_SYMBOL = '\u00B0';
 
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
@@ -139,8 +139,16 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
   $scope.tableIds = [];
   $scope.selectedInstall = null;
   $scope.error = null;
+  $scope.formData = {
+    noInstalls: false
+  };
+
+  var resetFlags = function(){
+    $scope.formData.noInstalls = false;
+  };
 
   $scope.getInstalls = function(){
+    resetFlags();
     SolarService.getInstalls().then(function(response){
       if (response.data && response.data.installs){
         $scope.installData = response.data.installs;
@@ -148,6 +156,10 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
       }
       else {
         $scope.error = "Error connecting to PVWatts5 API.  Please try again later.";
+      }
+      if ($scope.installData.length == 0) {
+        console.log("no installs...");
+        $scope.formData.noInstalls = true;
       }
     });
   }
@@ -161,6 +173,7 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
         "Name": data.name,
         "Created": $filter('date')(data.created, "MM/dd/yy"),
         "Location": formatGeocode(data.location.long, data.location.lat),
+        "Orientation": formatOrientation(data.orientation.tilt, data.orientation.azimuth),
         "Power": (data.panel.capacity + " kW"),
         "Losses": (data.panel.losses + "%"),
         "Placement": formatPanelData(data.panel.array_type),
@@ -212,7 +225,8 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
     var svg = d3.select('.chartArea')
       .append("svg")
       .attr("width", gWidth)
-      .attr("height", gHeight);
+      .attr("height", gHeight)
+      .attr("opacity", "0");
 
     var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(12)
       .tickFormat(function(d){ return catLabel(d); });
@@ -236,6 +250,11 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
 	      .x(function (d) { return xScale(d.x); })
 	       .y(function (d) { return yScale(d.y); })
 	  );
+
+    var legend = svg.append("g").attr("class", "legend")
+      .attr("height", 200).attr("width", 250);
+
+    svg.transition().delay(300).duration(1000).attr("opacity", "1");
   }
 
 
@@ -258,8 +277,8 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
 
 
   var formatGeocode = function(longitude, latitude){
-    var tempLong = longitude.toFixed(1);
-    var tempLat = latitude.toFixed(1);
+    var tempLong = longitude.toFixed(0);
+    var tempLat = latitude.toFixed(0);
     var northSouth, eastWest;
     if (longitude > 0) eastWest = "E";
     else {
@@ -273,6 +292,10 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
     }
     return tempLat + DEG_SYMBOL + " " + northSouth + ", " + tempLong + DEG_SYMBOL + " " + eastWest;
   };
+
+  var formatOrientation = function(tilt, azimuth){
+    return tilt + DEG_SYMBOL + " tilt, " + azimuth + DEG_SYMBOL + "az.";
+  }
 
   var formatSystemData = function(capacity, losses){
     return capacity + "kW, est. " + losses + "% loss";
@@ -316,8 +339,6 @@ app.controller('CreateController', ['$scope', '$location', 'numInstallResponse',
 
   $scope.error = null;
   $scope.dupName = false;
-  $scope.suggestedTilt = "";//set equal to latitude
-  $scope.suggestedAzi = "";//0 for southern hemisphere; 180 for northern
   $scope.installData = { //initialize to default values
     name: "",
     latitude: 40,

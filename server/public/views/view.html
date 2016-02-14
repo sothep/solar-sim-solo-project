@@ -1,12 +1,18 @@
 <div class="pageTitle"><h1>View Solar Installations</h1></div>
 <div class="textHolder">
-    <h2 class="chartTitle">Projected AC Energy Output by Month (kW-h)</h2>
-    <div class="chartArea"></div>
-  <table tr-ng-grid="" items="tableData" enable-sorting="true" page-items="5" fields="['Name', 'Created', 'Location', 'Power', 'Losses', 'Placement', 'Panel']">
-    <tbody>
-      <tr>
-        <td><button class="delButton" ng-click="deleteInstall(gridItem.id)">Delete</button></td>
-      </tr>
-    </tbody>
-  </table>
+    <div class="dataDisplay" ng-hide="formData.noInstalls">
+      <h2 class="chartTitle">Projected AC Energy Output (kW-h)</h2>
+      <div class="chartArea"></div>
+      <div class="tableContainer" ng-cloak>
+        <table tr-ng-grid="" items="tableData" enable-sorting="true" page-items="5" fields="['Name', 'Location', 'Orientation', 'Power', 'Losses', 'Placement', 'Panel']">
+          <tbody>
+            <tr>
+              <td><button class="delButton" ng-click="deleteInstall(gridItem.id)">Delete</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <h2 class="warning" ng-show="formData.noInstalls">You don't have any solar installations yet.</h2>
+    <h4 class="warningInfo" ng-show="formData.noInstalls">To get started, click "Create Solar Installations" on the sidebar.</h4>
 </div>

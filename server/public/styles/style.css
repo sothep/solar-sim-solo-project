@@ -62,7 +62,7 @@ label.submitLabel {
 #installName {
   width: 100%;
   margin: 5px 0;
-  font: italic 16px "Arial", serif;
+  font: italic 16px "Arial", sans-serif;
 }
 
 .warningPopup {
@@ -72,7 +72,7 @@ label.submitLabel {
 
 .sidebar {
   position: absolute;
-  z-index: 1;
+  z-index: 10;
   top: 0px;
   left: 0px;
   bottom: 0px;
@@ -96,17 +96,61 @@ label.submitLabel {
 }
 
 .angularView {
-  /*overflow-y: scroll;*/
   width: 70%;
   height: auto;
-  min-width: 830px;
-  min-height: 400px;
-  max-height: 700px;
+  min-width: 850px;
+  min-height: 510px;
+  max-height: 720px;
   margin: 10px 30px;
-  /*padding-bottom: 15px;*/
   border: 2px #555555 solid;
   border-radius: 5px;
   background-color: #FEFEFE;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    -webkit-transform: translateX(-300%);
+    -ms-transform: translateX(-300%);
+    transform: translateX(-300%);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  to {
+    -webkit-transform: translateX(200%);
+    -ms-transform: translateX(200%);
+    transform: translateX(200%);
+    opacity: 0;
+  }
+}
+
+.warningPopup {
+  -webkit-transition:all linear 0.25s;
+  transition:all linear 0.25s;
+}
+
+.warningPopup.ng-hide {
+  opacity:0;
+}
+
+.angularView.ng-enter {
+  animation: slideInRight 1s both ease-in;
+}
+
+.angularView.ng-leave {
+  animation: slideOutRight 0.5s both ease-in;
 }
 
 .createForm {
@@ -120,9 +164,7 @@ label.submitLabel {
   width: 90%;
   margin: 10px;
   text-align: center;
-  /*border: 2px #005500 solid;*/
-  /*border: 2px #444444 solid;*/
-  border: none;
+  border: 2px #EEEEEE solid;
   border-radius: 5px;
   background-color: #EEEEEE;
   color: #005500;
@@ -157,7 +199,7 @@ label.submitLabel {
 }
 
 .createContainer {
-  height: 300px;
+  height: 400px;
   display: block;
   min-width: 150px;
   padding: 5px 10px;
@@ -169,11 +211,11 @@ label.submitLabel {
 
 .createContainer.left {
   float: left;
-  width: 28%;
+  width: 20%;
 }
 
 .createContainer.middle {
-  margin-left: 31%;
+  margin-left: 23%;
   margin-right: 31%;
 }
 
@@ -184,11 +226,30 @@ label.submitLabel {
 
 .createContainerFloor {
   clear: both;
-  margin: 20px 5px;
+  margin: 5px 5px;
   padding: 20px 0;
   float: right;
   display: inline-block;
-  /*height: 30px;*/
+}
+
+.pageInstructions {
+  font: bold 18px "Georgia", serif;
+  color: darkgreen;
+}
+
+.pageDetails {
+  margin-left: 10px;
+  font: italic 14px "Arial", sans-serif;
+}
+
+.pageDetails span {
+  font-weight: bold;
+  color: darkblue;
+}
+
+.controlRecommendation {
+  font: italic 11px "Arial", sans-serif;
+  color: darkgreen;
 }
 
 .floorPadding {
@@ -205,7 +266,7 @@ label.submitLabel {
 
 .radioHolder {
   display: inline-block;
-  /*margin: 5px 0;*/
+  margin: 0 10px;
 }
 
 .radioControlLabel {
@@ -213,12 +274,53 @@ label.submitLabel {
   font-size: 14px;
 }
 
+.radioControlLabel span {
+  font-weight: normal;
+  font-style: italic;
+}
+
 .radioControl {
   float: left;
 }
 
-.colControls {
+.colControls.radioControls {
   display: inline-block;
+}
+
+.colControls.textControls {
+  display: block;
+  text-align: center;
+  margin: 5px;
+  padding: 3px;
+}
+
+.controlBlock {
+  display: block;
+  margin: 5px 10px;
+}
+
+.controlBlock.textControl {
+  padding-top: 25px;
+  float: left;
+}
+
+.controlBlock img {
+  float: right;
+}
+
+.colControlLabel {
+  font: bold 16px "Arial", sans-serif;
+}
+
+.colControlLabel span {
+  font: italic 16px "Arial", sans-serif;
+}
+
+.textControls input {
+  width: 50%;
+  margin-left: 25%;
+  text-align: center;
+  font: italic 14px "Arial", sans-serif;
 }
 
 .submitButton {
@@ -288,12 +390,12 @@ label.submitLabel {
 }
 
 .tr-ng-column-filter, .input-sm {
-  max-width: 100px;
+  max-width: 105px;
   text-align: center;
 }
 
 .tr-ng-cell {
-  max-width: 110px;
+  max-width: 105px;
   font: 14px/16px "Arial", sans-serif;
   text-align: center;
 }
@@ -320,7 +422,6 @@ label.submitLabel {
 .pagination a {
   margin: 3px;
   color: orange;
-  /*font-style: italic;*/
   font-size: 15px;
   font-weight: bold;
 }
@@ -334,13 +435,13 @@ label.submitLabel {
 /*-----------------------------*/
 
 h2.chartTitle {
-  color: indigo;
-  font: 24px/26px "Arial", sans-serif;
+  color: darkblue;
+  font: bold 20px/22px "Arial", sans-serif;
   text-align: center;
 }
 
 .chartArea {
-  height: 100%;
+  height: 360px;
   display: block;
   text-align: center;
 }

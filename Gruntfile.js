@@ -23,12 +23,13 @@ module.exports = function(grunt) {
                 cwd: "node_modules/",
                 src: [
                     "angular/angular.min.js",
+                    "angular/angular.min.js.map",
+					          "angular/angular-csp.css",
+                    "angular-animate/angular-animate.min.js",
                     "angular-route/angular-route.min.js",
                     "angular-cookies/angular-cookies.min.js",
                     "tr-ng-grid/trNgGrid.min.css",
                     "tr-ng-grid/trNgGrid.min.js",
-                    "angular/angular.min.js.map",
-					          "angular/angular-csp.css",
                     "d3/d3.min.js"
                 ],
                 "dest": "server/public/scripts/vendors/"

@@ -6,6 +6,7 @@
     <script type="text/javascript" src="scripts/vendors/angular/angular.min.js"></script>
     <script type="text/javascript" src="scripts/vendors/angular-route/angular-route.min.js"></script>
     <script type="text/javascript" src="scripts/vendors/angular-cookies/angular-cookies.min.js"></script>
+    <script type="text/javascript" src="scripts/vendors/angular-animate/angular-animate.min.js"></script>
     <script type="text/javascript" src="scripts/vendors/tr-ng-grid/trNgGrid.min.js"></script>
     <script type="text/javascript" src="scripts/vendors/d3/d3.min.js"></script>
     <script type="text/javascript" src="scripts/assets/client.min.js"></script>
@@ -17,8 +18,8 @@
       <div class="sidebar">
         <div class="controls" ng-show="mainControl.loggedIn()">
           <a href="/"><button class="nav" ng-class="mainControl.isNavButtonActive('/')">Home</button></a>
-          <a href="/view"><button class="nav" ng-class="mainControl.isNavButtonActive('/view')">View Saved Solar Installations</button></a>
           <a href="/create"><button class="nav" ng-class="mainControl.isNavButtonActive('/create')">Create New Solar Installation</button></a>
+          <a href="/view"><button class="nav" ng-class="mainControl.isNavButtonActive('/view')">View Saved Solar Installations</button></a>
           <button class="nav signOut" ng-click="mainControl.signOut()">Sign Out</button>
         </div>
       </div>
