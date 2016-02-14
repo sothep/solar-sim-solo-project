@@ -108,8 +108,8 @@
          <input class="submitButton" type="submit" ng-disabled="formInfo.disableForm" value="Create Solar Installation">
     </div>
     <div class="floorControls">
-      <label class="submitLabel" for="installName">Installation Name</label>
-      <input ng-model="installData.name" type="text" id="installName" maxlength="15" required>
+      <label class="submitLabel" for="installName">Installation Name (10 Chars.)</label>
+      <input ng-model="installData.name" type="text" id="installName" maxlength="10" required>
       <p class="formWarning" ng-show="dupName">Error: name already exists in database.</p>
       <p class="formWarning">Create up to {{formInfo.numRemaining}} more
         <ng-pluralize count="formInfo.numRemaining" when="{'1':'installation', 'other':'installations'}"></ng-pluralize>!</p>

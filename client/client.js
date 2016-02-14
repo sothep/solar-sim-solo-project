@@ -1,8 +1,14 @@
 var app = angular.module('SolarApp', ['ngRoute', 'ngCookies', 'ngAnimate', 'trNgGrid']);
+//-------------------------------------------------
+//&&&&&&&&&&********App Constants********&&&&&&&&&&
+//-------------------------------------------------
 var MAX_INSTALLS_PERMITTED = 10;
 //Note regarding above: currently selected D3 palette contains 10 colors - search for "d3.scale.category"
 var DEG_SYMBOL = '\u00B0';
 
+//-------------------------------------------------
+//&&&&&&&&&&*******Angular Routes********&&&&&&&&&&
+//-------------------------------------------------
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
   $routeProvider
     .when('/login', {
@@ -32,6 +38,9 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   $locationProvider.html5Mode(true);
 }]);
 
+//-------------------------------------------------
+//&&&&&&&&&********Main/Navigation********&&&&&&&&&
+//-------------------------------------------------
 app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiService', 'SolarService', function($scope, $location, $interval, AuthentiService, SolarService){
   this.username = "";
   this.loggedIn = function(){
@@ -60,6 +69,10 @@ app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiS
   $interval(checkServerLogin, 30000);
 }]);
 
+
+//-------------------------------------------------
+//&&&&&&&&&&**********Login Page*********&&&&&&&&&&
+//-------------------------------------------------
 app.controller('LoginController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
   $scope.pageClass = "short";
   $scope.user = {
@@ -86,6 +99,9 @@ app.controller('LoginController', ['$scope', '$location', 'AuthentiService', fun
   }
 }]);
 
+//-------------------------------------------------
+//&&&&&&&&*******Create New Account********&&&&&&&&
+//-------------------------------------------------
 app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
   $scope.pageClass = "short";
   $scope.userExists = false;
@@ -127,15 +143,24 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
   };
 }]);
 
+//-------------------------------------------------
+//&&&&&&&&&********Logged-In Home********&&&&&&&&&
+//-------------------------------------------------
 app.controller('HomeController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
   if (!AuthentiService.loggedIn()) $location.path('/login');
   $scope.pageClass = "short";
 }]);
 
+//-------------------------------------------------
+//&&&&&&&&&&*******Pop-up Warnings*******&&&&&&&&&&
+//-------------------------------------------------
 app.controller('WarningController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
   if (!AuthentiService.loggedIn()) $location.path('/login');
 }]);
 
+//-------------------------------------------------
+//&&&&&&&&&&********View Installs********&&&&&&&&&&
+//-------------------------------------------------
 app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiService', 'SolarService', function($scope, $location, $filter, AuthentiService, SolarService){
   if (!AuthentiService.loggedIn()) $location.path('/login');
   $scope.installData = [];
@@ -168,6 +193,16 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
     });
   }
 
+  $scope.deleteInstall = function(installId){
+    SolarService.deleteInstall(installId).then(function(response){
+      $scope.getInstalls();
+    });
+  };
+  $scope.getInstalls();
+
+  //-------------------------------------------------
+  //&&&&&&&&&&*******Table Creation********&&&&&&&&&&
+  //-------------------------------------------------
   var setTableData = function(){
     $scope.tableData = [];
     for (var i = 0; i < $scope.installData.length; i++){
@@ -191,10 +226,9 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
   //-------------------------------------------------
   //&&&&&&&&&&*****D3 Graph Generation*****&&&&&&&&&&
   //-------------------------------------------------
-
-  var gWidth = 600;
-  var gHeight = 360;
-  var pad = 50;
+  var gWidth = 650;
+  var gHeight = 350;
+  var pad = 60;
 
   var gData = [];
   var legendInfo = [];
@@ -202,6 +236,7 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
 
   var setGraphData = function(){
     gData = [];
+    legendInfo = [];
     for (var i = 0; i < $scope.tableData.length; i++){
       gData.push([]);
       for (var j = 0; j < $scope.tableData[i].AC_monthly_kWh.length; j++){
@@ -256,12 +291,30 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
 	  );
 
     var legend = svg.append("g").attr("class", "legend")
-      .attr("height", 200).attr("width", 250);
+      .attr("height", 100).attr("width", 100)
+      .attr('transform', 'translate(0,20)');
+
+    legend.selectAll("rect").data(gData).enter()
+      .append("rect").attr("x", gWidth - 115)
+      .attr("y", function(d, i){ return i * 20 + 20; })
+      .attr("width", 10).attr("height", 10)
+      .style("fill", function(d) {
+        return legendInfo[gData.indexOf(d)].color;
+      });
+
+    legend.selectAll("text").data(gData).enter()
+      .append("text").attr("x", gWidth - 100)
+      .attr("y", function(d, i){ return i *  20 + 29; })
+      .text(function(d) {
+        return legendInfo[gData.indexOf(d)].name;
+    });
 
     svg.transition().delay(300).duration(1000).attr("opacity", "1");
   }
 
-
+  //-------------------------------------------------
+  //&&&&&&&**Table/Graph Accessory Functions**&&&&&&&
+  //-------------------------------------------------
   function catLabel(monthIndex) {
     switch (monthIndex){
       case 0: return "Jan";
@@ -278,7 +331,6 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
       case 11: return "Dec";
     }
   }
-
 
   var formatGeocode = function(longitude, latitude){
     var tempLong = longitude.toFixed(0);
@@ -320,15 +372,11 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
       default: return "Thin Film";
     }
   };
-
-  $scope.deleteInstall = function(installId){
-    SolarService.deleteInstall(installId).then(function(response){
-      $scope.getInstalls();
-    });
-  };
-  $scope.getInstalls();
 }]);
 
+//-------------------------------------------------
+//&&&&&&&*****Create Solar Installation*****&&&&&&&
+//-------------------------------------------------
 app.controller('CreateController', ['$scope', '$location', 'numInstallResponse', 'AuthentiService', 'SolarService', function($scope, $location, numInstallResponse, AuthentiService, SolarService){
   if (!AuthentiService.loggedIn()) $location.path('/login');
   var numInstalls = numInstallResponse.data.count;
@@ -384,6 +432,9 @@ app.controller('CreateController', ['$scope', '$location', 'numInstallResponse',
 }]);
 
 
+//-------------------------------------------------
+//&&&&&&&&&*******Server/API Calls********&&&&&&&&&
+//-------------------------------------------------
 app.factory('SolarService', ['$http', function($http){
   var newInstall = function(installData){
     return $http.post('/pvwatts5/new', installData);
@@ -405,6 +456,9 @@ app.factory('SolarService', ['$http', function($http){
   };
 }]);
 
+//-------------------------------------------------
+//&&&&&&&&&&*******Authentication********&&&&&&&&&&
+//-------------------------------------------------
 app.factory('AuthentiService', ['$http', '$cookies', function($http, $cookies){
   var user = false;
 

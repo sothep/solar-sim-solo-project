@@ -119,7 +119,8 @@ label.submitLabel {
 
 .regImgContainer {
   display: inline-block;
-  margin-left: 300px;
+  float: right;
+  margin-right: 20px;
 }
 
 .regImgContainer img {
@@ -425,7 +426,6 @@ label.submitLabel {
   background: rgba(55, 55, 55, 0.9);
   padding: 20px 0;
   border: 1px solid black;
-  /*border-radius: 2px;*/
   z-index: 1000;
 }
 
@@ -514,7 +514,7 @@ h2.chartTitle {
 }
 
 .chartArea {
-  height: 360px;
+  height: 350px;
   display: block;
   text-align: center;
 }
@@ -528,4 +528,8 @@ h2.chartTitle {
 .line {
   stroke-width: 1.5px;
   fill: none;
+}
+
+.legend text {
+  font: 11px "Arial", sans-serif;
 }
