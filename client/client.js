@@ -19,7 +19,14 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       controller: 'RegisterController'
     }).when('/', {
       templateUrl: 'views/home.html',
-      controller: 'HomeController'
+      controller: 'HomeController',
+      resolve: {
+        goToLogin: ['$location', 'AuthentiService', function($location, AuthentiService){
+          if (!AuthentiService.loggedIn()) {
+            $location.path('/login');
+          }
+        }]
+      }
     }).when('/create', {
       templateUrl: 'views/create.html',
       controller: 'CreateController',
@@ -146,7 +153,7 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
 //&&&&&&&&&********Logged-In Home********&&&&&&&&&
 //-------------------------------------------------
 app.controller('HomeController', ['$scope', '$location', 'AuthentiService', function($scope, $location, AuthentiService){
-  if (!AuthentiService.loggedIn()) $location.path('/login');
+  // if (!AuthentiService.loggedIn()) $location.path('/login');
   $scope.pageClass = "short";
 }]);
 
