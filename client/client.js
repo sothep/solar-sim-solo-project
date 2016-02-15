@@ -56,7 +56,7 @@ app.controller('MainController', ['$scope', '$location', '$interval', 'AuthentiS
   var checkServerLogin = function(){
     AuthentiService.serverLoggedIn().then(function(response){
       console.log('checking login status with server...');
-      if (response.data == 'failure') {
+      if (!response.data || response.data == 'failure') {
         if ($location.path().toString() === '/register' || $location.path().toString() === '/login') return;
         signOut();
       }
@@ -120,7 +120,6 @@ app.controller('RegisterController', ['$scope', '$location', 'AuthentiService', 
 
   $scope.register = function(){
     resetFlags();
-    console.log('hello?');
     if ($scope.user.password != $scope.passwordConfirm){
       $scope.passwordUnmatched = true;
       return;
@@ -187,7 +186,6 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
         $scope.error = "Error connecting to PVWatts5 API.  Please try again later.";
       }
       if ($scope.installData.length == 0) {
-        console.log("no installs...");
         $scope.formData.noInstalls = true;
       }
     });
@@ -244,8 +242,6 @@ app.controller('ViewController', ['$scope', '$location', '$filter', 'AuthentiSer
       }
       legendInfo.push({'name': $scope.tableData[i].Name, 'color': palette(i)});
     }
-    console.log('gData:', gData);
-    console.log('legendInfo:', legendInfo);
 
     var yRange = d3.extent(d3.merge(gData), function(axisData){ return axisData.y; });
     var xRange = d3.extent(d3.merge(gData), function(axisData){ return axisData.x; });

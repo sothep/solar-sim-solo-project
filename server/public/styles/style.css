@@ -98,7 +98,7 @@ label.submitLabel {
   width: 70%;
   height: auto;
   min-width: 850px;
-  min-height: 510px;
+  min-height: 500px;
   max-height: 720px;
   margin: 10px 30px;
   border: 2px #555555 solid;
@@ -169,16 +169,34 @@ label.submitLabel {
   margin-left: 5px;
 }
 
-.regInstructions {
+.regInstructions, .homeInstructions, .homeDetails {
   margin: 15px 15px 25px 15px;
   padding: 5px 10px;
   font: 20px/22px "Georgia", serif;
 }
 
-.regInstructions span {
+.homeDetails {
+  font-size: 18px;
+}
+
+.regInstructions span, .homeInstructions span, .homeDetails span {
   font-style: italic;
   font-weight: bold;
+}
+
+.regInstructions span, .homeInstructions span {
   color: darkblue;
+}
+
+.homeDetails span {
+  color: darkgreen;
+}
+
+.homeDisclaimer {
+  margin: 15px 15px 25px 15px;
+  padding: 5px 10px;
+  font: italic 14px "Georgia", serif;
+  color: darkred;
 }
 
 @keyframes fadeIn {
@@ -301,7 +319,7 @@ label.submitLabel {
 .createContainerFloor {
   clear: both;
   margin: 5px 5px;
-  padding: 20px 0;
+  padding: 10px 0;
   float: right;
   display: inline-block;
 }
