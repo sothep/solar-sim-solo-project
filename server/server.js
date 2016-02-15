@@ -28,7 +28,9 @@ app.use('/auth', register);
 app.use('/pvwatts5', solarAPI);
 app.use('/', index);
 
-var mongoURI = 'mongodb://localhost:27017/solar-test';
+// var mongoURI = 'mongodb://localhost:27017/solar-test';
+var mongoURI = 'mongodb://' + process.env.MONGOLAB_URI + '/PVRays';
+
 mongoose.connect(mongoURI);
 
 passport.serializeUser(function(user, done){
